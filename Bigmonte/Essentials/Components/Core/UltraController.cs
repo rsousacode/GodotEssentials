@@ -19,7 +19,7 @@ namespace Bigmonte.Essentials
         private MethodInfo _lateUpdateMethod;
         private MethodInfo _onDisabledMethod;
         private MethodInfo _onEnabledMethod;
-        private bool _prevVisibility = true;
+        private bool _prevVisibility ;
 
 
         private bool _startCalled;
@@ -78,6 +78,7 @@ namespace Bigmonte.Essentials
             {
                 Spatial spatial = _referencedNode as Spatial;
                 _visibilityHandler = new SpatialVisibilityHandler(spatial);
+                GD.Print("Node is Spatial");
             }
             else if (_referencedNode is CanvasItem )
             {
@@ -108,6 +109,7 @@ namespace Bigmonte.Essentials
 
                 if (!_startCalled)
                 {
+                    GD.Print("On visibility change");
                     OnVisibilityChange();
 
                     _startCalled = true;
@@ -191,7 +193,7 @@ namespace Bigmonte.Essentials
         {
             
             var curVisibility = _visibilityHandler.IsVisible;
-            
+
             if (curVisibility == _prevVisibility)
             {
                 return;
