@@ -1,74 +1,95 @@
-# UnityGodotCompat
-An implementation of the C# UnityEngine namespace that works in Godot
+# C# Essentials for Godot
 
-# What To Expect
-The goal of this compatibility library is to try and make a 1 to 1 way to import code you have for the Unity Engine and be able to just start using it in Godot.
+This project allows  enabling and disabling nodes virtually. This means methods such as `Process`, `LateUpdate` and `FixedUpdate`, will not run when the object is not visible, and therefore inactive.
+It is mainly a fork of: [unity-godot-compat](https://github.com/NathanWarden/unity-godot-compat) with many deletions and modifications.
 
-Unfortunately, while this library will get you close, there are a few things you need to set up first, and there are also a few things that simply don't translate directly from Unity to Godot. For instance, since Godot uses a hierachy of Nodes, and each node works the same way as a Component in Unity, the GetComponents method doesn't make much sense because there will always only be a single component per Node, since the Node itself is the component. However, GetComponentsInChildren still makes a lot of sense because you can have multiple nodes of a particular type that are children of each node.
+## Getting Started
 
-**If there's something missing that you need please do one of the following:**
+1) Add the `EssentialsAutoLoad.cs` to a node in your global scene ([singleton](https://docs.godotengine.org/en/latest/getting_started/step_by_step/singletons_autoload.html)).
+2) Create a new TestScript.cs
+3) Write a simple "Hello Godot".
 
-1) Open an issue and provide a sample MonoBehaviour from Unity (in a zip file preferably). If you don't provide a sample I will likely not be able to help you as my time is limited.
-2) Fork this repo, implement it yourself and make a pull request. It will be very appreciated!
+```csharp
+using Bigmonte.Essentials;
 
-# Setup
-The only thing that is currently needed to set up this library for use is that you need to create an AutoLoad C# class that derives from UnityEngineAutoLoad, add it to your .csproj project, then add it to the AutoLoad tab under Project > Project Settings > AutoLoad
-
-Here's an example of the C# class you need to create.
-
-``` C#
-public class MyUnityEngineAutoLoad : UnityEngine.UnityEngineAutoLoad
+[Extended]
+public class TestScript : Node
 {
-  // No code needed here
-}
-```
-
-Next, to setup your MonoBehaviour you'll likely need to add the `UseAsMonoBehaviour` attribute and change the class to derive from the Node type that you're using.
-
-For instance, if you have the following class in Unity:
-
-``` C#
-using UnityEngine;
-
-public class ObjectSpinner : MonoBehaviour
-{
-    public float rotationSpeed = 30.0f;
-
-    void Update()
+    private void Start()
     {
-        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+        GD.Print("Hello Godot");
     }
-}
-```
 
-Since it operates in 3D and will require a Spatial node you'll need to change it to the following:
-
-``` C#
-using UnityEngine;
-
-[UseAsMonoBehaviour]
-public class ObjectSpinner : Spatial
-{
-    public float rotationSpeed = 30.0f;
-
-    void Update()
+    private void OnEnable()
     {
-        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+   
     }
+
+    private void OnDisable()
+    {
+
+    }
+
 }
+
 ```
 
-**Notice that all we did was *add the attribute* [UseAsMonoBehaviour] and change `MonoBehaviour` to `Spatial`**
+#### Common methods ####
 
-There are some cases where you will literally need to change nothing at all. A simple example of this would be a frames per second counter. A class like this doesn't require any special node type. Therefore, it can still derive from `MonoBehaviour` since it derives directly from `Node`.
+Some of the most commonly used methods of Unity are implemented. Such as:
+
+- `void Awake () {} `
+- `void Start () {}`
+- `void Process () {} ` Previously called Update, but renamed to Process to avoid conflict with an Engine function called "Update". 
+- `void LateUpdate () {} `
+- `void OnEnable () {}`  requires the use of `SetActive` method
+- `void OnDisable () {} ` requires the use of method `node.SetActive (bool)` or  `node.Destroy()`
 
 
-# Contributing
-For now, the only rules for contributing are:
-1) Follow the normal casing rules for C# except for the sake of Unity compatibility. For instance properties start with a capital letter, however many UnityEngine classes contain properties that start with a lowercase letter. In these cases use a lowercase letter.
-2) Indent using tabs, not spaces
-3) Use uncuddled curly brackets
-4) If you aren't sure about any other styling issues, try and follow the general styling of the MonoBehaviour class as this is almost exclusively custom code.
-5) If you aren't sure about something, please open an issue and ask :)
+#### Coroutines  ####
 
-And... thanks!
+Example:
+
+```csharp
+[Extended]
+public class Ultra : Node
+{
+    private void Start()
+    {
+        this.StartCoroutine(MyCoroutine());
+    }
+
+    private IEnumerator MyCoroutine()
+    {
+        yield return new WaitForSeconds(1f);
+        GD.Print("1" );
+        yield return new WaitForSeconds(1f);
+        GD.Print("2" );
+    }
+
+}
+
+```
+
+#### Notes ####
+
+* It is discouraged to change the Visible variable of Spatial or CanvasItem type nodes. Use for example `node.SetActive(false);` or `this.SetActive(false);`
+*  It is discouraged to Use Free or QueueFree, use for example `this.Destroy();` or `node.Destroy();` for destroying objects.
+
+### Prerequisites
+Godot 3+
+
+## Contributing
+
+Feel free to point issues and help the development of this asset. 
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+
+- Most of the intention of providing Unity portability was removed in this fork. 
+- This extension relies on one singleton to work.
+- It may contain experimental/unsafe code 
+
