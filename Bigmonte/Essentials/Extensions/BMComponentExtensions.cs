@@ -114,7 +114,7 @@ namespace Bigmonte.Essentials
         public static void FixPosition(this Panel panel, Vector2 relativePosition)
         {
             var size = panel.GetSize();
-            var newPos = new Vector2(panel.GetPosition().x - size.x / 2, panel.GetPosition().y - size.y / 2) +
+            var newPos = new Vector2(panel.RectPosition.x - size.x / 2, panel.RectPosition.y - size.y / 2) +
                          relativePosition;
             panel.SetPosition(newPos);
         }

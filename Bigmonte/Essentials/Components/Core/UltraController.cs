@@ -74,20 +74,23 @@ namespace Bigmonte.Essentials
 
         private void InitUltraController()
         {
-            if ( _referencedNode is Spatial )
+            switch (_referencedNode)
             {
-                Spatial spatial = _referencedNode as Spatial;
-                _visibilityHandler = new SpatialVisibilityHandler(spatial);
-                GD.Print("Node is Spatial");
-            }
-            else if (_referencedNode is CanvasItem )
-            {
-                CanvasItem canvasItem = _referencedNode as CanvasItem;
-                _visibilityHandler = new CanvasItemVisibilityHandler(canvasItem);
-            }
-            else
-            {
-                _visibilityHandler = new VisibilityHandler();
+                case Spatial node:
+                {
+                    Spatial spatial = node;
+                    _visibilityHandler = new SpatialVisibilityHandler(spatial);
+                    break;
+                }
+                case CanvasItem item:
+                {
+                    CanvasItem canvasItem = item;
+                    _visibilityHandler = new CanvasItemVisibilityHandler(canvasItem);
+                    break;
+                }
+                default:
+                    _visibilityHandler = new VisibilityHandler();
+                    break;
             }
 
             _awakeMethod = FindMethod("Awake", typeof(void));
@@ -109,7 +112,6 @@ namespace Bigmonte.Essentials
 
                 if (!_startCalled)
                 {
-                    GD.Print("On visibility change");
                     OnVisibilityChange();
 
                     _startCalled = true;
@@ -123,11 +125,16 @@ namespace Bigmonte.Essentials
                     if (_startMethodCr != null) StartCoroutine(r);
 
                 }
+                
+                if (!_visibilityHandler.IsVisible) return; // Added to avoid running after deactivating node
 
                 if (_processMethod != null)
                 {
                     var o = _processMethod.Invoke(_referencedNode, null);
                 }
+                
+                if (!_visibilityHandler.IsVisible) return;  // Added to avoid running after deactivating node
+
 
                 for (var i = 0; i < _coroutines.Count; i++)
                 {
