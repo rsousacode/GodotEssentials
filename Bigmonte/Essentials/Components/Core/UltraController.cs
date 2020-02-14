@@ -147,7 +147,7 @@ namespace Bigmonte.Essentials
             }
             catch (Exception e)
             {
-                GD.Print("[-] Update Exception: " + e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace);
+                GD.PrintErr("[-] Update Exception: " + e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n"  + e.InnerException + "\n\n" + e.TargetSite);
             }
         }
 

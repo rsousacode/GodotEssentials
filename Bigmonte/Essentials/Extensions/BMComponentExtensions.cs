@@ -22,14 +22,23 @@ namespace Bigmonte.Essentials
 
         public static T GetComponentInParent<T>(this Node node) where T : Node
         {
-            var curNode = node;
-
+            Node currentNode = node.GetParent();
             do
             {
-                if (node is T) return node as T;
+                if (currentNode is T)
+                {
+                    return currentNode as T;
+                }
+                currentNode = currentNode.GetComponentInChildren<T>();
+                
+                if (currentNode != null)
+                {
+                    return currentNode as T;
+                }
 
-                node = node.GetParent();
-            } while (node != null);
+                currentNode = currentNode.GetParent();
+
+            } while (currentNode != null);
 
             return null;
         }
@@ -40,7 +49,7 @@ namespace Bigmonte.Essentials
 
             do
             {
-                if (node is T) components.Add(node as T);
+                if (node is T toAdd) components.Add(toAdd);
 
                 node = node.GetParent();
             } while (node != null);
