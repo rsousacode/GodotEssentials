@@ -122,7 +122,7 @@ namespace Bigmonte.Essentials
         /// <param name="relativePosition">A position to be added</param>
         public static void FixPosition(this Panel panel, Vector2 relativePosition)
         {
-            var size = panel.GetSize();
+            var size = panel.RectSize;
             var newPos = new Vector2(panel.RectPosition.x - size.x / 2, panel.RectPosition.y - size.y / 2) +
                          relativePosition;
             panel.SetPosition(newPos);
@@ -138,9 +138,9 @@ namespace Bigmonte.Essentials
         public static void FixPosition(this Sprite panel, Vector2 relativePosition)
         {
             var size = panel.Texture.GetSize();
-            var newPos = new Vector2(panel.GetPosition().x - size.x / 2, panel.GetPosition().y - size.y / 2) +
+            var newPos = new Vector2(panel.Position.x - size.x / 2, panel.Position.y - size.y / 2) +
                          relativePosition;
-            panel.SetPosition(newPos);
+            panel.Position = newPos;
         }
 
         public static T[] GetComponentsInChildren<T>(this Node node) where T : Node

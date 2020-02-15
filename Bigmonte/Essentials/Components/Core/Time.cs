@@ -11,8 +11,8 @@ namespace Bigmonte.Essentials
 
         public static float timeScale
         {
-            get => Engine.GetTimeScale();
-            set => Engine.SetTimeScale(value);
+            get => Engine.TimeScale;
+            set => Engine.TimeScale = value;
         }
 
         public static int frameCount => Engine.GetFramesDrawn();

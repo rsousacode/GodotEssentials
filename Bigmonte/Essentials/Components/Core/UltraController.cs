@@ -106,49 +106,50 @@ namespace Bigmonte.Essentials
 
         public void Process()
         {
-            try
+            // try
+            // {
+
+            if (!_visibilityHandler.IsVisible) return; // Added to avoid running after deactivating node
+            
+            if (!_startCalled)
             {
-                if (!_visibilityHandler.IsVisible) return;
+                OnVisibilityChange();
 
-                if (!_startCalled)
+                _startCalled = true;
+
+
+                if (_startMethod != null)
                 {
-                    OnVisibilityChange();
-
-                    _startCalled = true;
-
-
-                    if (_startMethod != null)
-                    {
-                        var o = _startMethod.Invoke(_referencedNode, null);
-                    }
-
-                    if (_startMethodCr != null) StartCoroutine(r);
-
+                    var o = _startMethod.Invoke(_referencedNode, null);
                 }
-                
-                if (!_visibilityHandler.IsVisible) return; // Added to avoid running after deactivating node
 
-                if (_processMethod != null)
-                {
-                    var o = _processMethod.Invoke(_referencedNode, null);
-                }
-                
-                if (!_visibilityHandler.IsVisible) return;  // Added to avoid running after deactivating node
+                if (_startMethodCr != null) StartCoroutine(r);
 
-
-                for (var i = 0; i < _coroutines.Count; i++)
-                {
-                    var yielded = _coroutines[i].Current is CustomYieldInstruction yielder && yielder.MoveNext();
-
-                    if (yielded || _coroutines[i].MoveNext()) continue;
-                    _coroutines.RemoveAt(i);
-                    i--;
-                }
             }
-            catch (Exception e)
+            
+            if (!_visibilityHandler.IsVisible) return;
+
+            if (_processMethod != null)
             {
-                GD.PrintErr("[-] Update Exception: " + e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n"  + e.InnerException + "\n\n" + e.TargetSite);
+                var o = _processMethod.Invoke(_referencedNode, null);
             }
+            
+            if (!_visibilityHandler.IsVisible) return;  // Added to avoid running after deactivating node
+
+
+            for (var i = 0; i < _coroutines.Count; i++)
+            {
+                var yielded = _coroutines[i].Current is CustomYieldInstruction yielder && yielder.MoveNext();
+
+                if (yielded || _coroutines[i].MoveNext()) continue;
+                _coroutines.RemoveAt(i);
+                i--;
+            }
+            //}
+            // catch (Exception e)
+            // {
+            //     GD.PrintErr("[-] Update Exception: " + e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n"  + e.InnerException + "\n\n" + e.TargetSite);
+            // }
         }
 
         public void LateUpdate()
@@ -160,6 +161,24 @@ namespace Bigmonte.Essentials
 
         public void FixedUpdate()
         {
+            if (!_visibilityHandler.IsVisible) return;
+            
+            if (!_startCalled)
+            {
+                OnVisibilityChange();
+
+                _startCalled = true;
+
+
+                if (_startMethod != null)
+                {
+                    var o = _startMethod.Invoke(_referencedNode, null);
+                }
+
+                if (_startMethodCr != null) StartCoroutine(r);
+
+            }
+            
             if (!_visibilityHandler.IsVisible) return;
 
             if (_fixedUpdateMethod != null) _fixedUpdateMethod.Invoke(_referencedNode, null);

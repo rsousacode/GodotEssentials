@@ -81,7 +81,7 @@ namespace Bigmonte.Essentials
 
         private void InitialScan()
         {
-            CheckNode(GetTree().GetRoot());
+            CheckNode(GetTree().Root);
         }
 
         private void CheckNode(Node currentNode)
