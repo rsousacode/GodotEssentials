@@ -179,5 +179,20 @@ namespace Bigmonte.Essentials
         {
             spatial.Rotate(eulerAngles.Normalized(), eulerAngles.Length() * MathTools.Deg2Rad);
         }
+
+        /// <summary>
+        ///   <para>Projects a vector onto another vector.</para>
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <param name="onNormal"></param>
+        ///
+                
+        public static Vector3 ProjectOnNormal(Vector3 vector, Vector3 onNormal)
+        {
+            float num = onNormal.Dot(onNormal);
+            return (double) num < (double) Mathf.Epsilon ? Vector3.Zero : onNormal * vector.Dot( onNormal) / num;
+        }
+
+
     }
 }
