@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Godot;
 
@@ -21,7 +22,7 @@ namespace Bigmonte.Essentials
             }
         }
 
-        private readonly List<Node> _monoNodes = new List<Node>();
+        private readonly Dictionary<int, Node> _monoNodes = new Dictionary<int, Node>();
 
         private readonly List<Node> _monoNodesToDelete = new List<Node>();
         private readonly Dictionary<Node, UltraController> _ultras = new Dictionary<Node, UltraController>();
@@ -73,9 +74,13 @@ namespace Bigmonte.Essentials
         public override void _PhysicsProcess(float delta)
         {
             Time.fixedDeltaTime = delta;
-
-
-            foreach (var node in _monoNodes) _ultras[node].FixedUpdate();
+            
+            for (var i = 0; i < _monoNodes.Count; i++)
+            {
+                var n = _monoNodes[i];
+                _ultras[n].FixedUpdate();
+            }
+            
         }
 
 
@@ -90,7 +95,8 @@ namespace Bigmonte.Essentials
 
             if (attr != null)
             {
-                _monoNodes.Add(currentNode);
+                //_monoNodes.Add(currentNode);
+                _monoNodes[_monoNodes.Count] = currentNode;
                 _ultras[currentNode] = new UltraController(currentNode);
                 _ultras[currentNode].Awake();
             }
@@ -153,7 +159,11 @@ namespace Bigmonte.Essentials
 
         private void RemoveNode(Node node)
         {
-            _monoNodes.Remove(node);
+            if (_monoNodes.ContainsValue(node))
+            {
+                int GetKey = _monoNodes.FirstOrDefault(x => x.Value == node).Key;
+                _monoNodes.Remove(GetKey);
+            }
             _ultras[node].ActivateNode(false);
             _ultras.Remove(node);
             node.QueueFree();

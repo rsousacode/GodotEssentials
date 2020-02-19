@@ -39,22 +39,30 @@ namespace Bigmonte.Essentials
 
         private MethodInfo FindMethod(string methodName, Type returnType, Type type = null)
         {
-            type = type == null ? _referencedNode.GetType() : type;
-            var method = type.GetMethod(methodName, BindingFlags);
+            while (true)
+            {
+                type = type == null ? _referencedNode.GetType() : type;
+                var method = type.GetMethod(methodName, BindingFlags);
 
-            if (method == null)
-                return type == typeof(Node) || type.BaseType == null
-                    ? null
-                    : FindMethod(methodName, returnType, type.BaseType);
-            if (method.GetParameters().Length != 0)
-                return type == typeof(Node) || type.BaseType == null
-                    ? null
-                    : FindMethod(methodName, returnType, type.BaseType);
-            if (method.ReturnType == returnType) return method;
+                if (method == null)
+                {
+                    if (type == typeof(Node) || type.BaseType == null) return null;
+                    type = type.BaseType;
+                    continue;
+                }
 
-            return type == typeof(Node) || type.BaseType == null
-                ? null
-                : FindMethod(methodName, returnType, type.BaseType);
+                if (method.GetParameters().Length != 0)
+                {
+                    if (type == typeof(Node) || type.BaseType == null) return null;
+                    type = type.BaseType;
+                    continue;
+                }
+
+                if (method.ReturnType == returnType) return method;
+
+                if (type == typeof(Node) || type.BaseType == null) return null;
+                type = type.BaseType;
+            }
         }
 
 
@@ -78,13 +86,13 @@ namespace Bigmonte.Essentials
             {
                 case Spatial node:
                 {
-                    Spatial spatial = node;
+                    var spatial = node;
                     _visibilityHandler = new SpatialVisibilityHandler(spatial);
                     break;
                 }
                 case CanvasItem item:
                 {
-                    CanvasItem canvasItem = item;
+                    var canvasItem = item;
                     _visibilityHandler = new CanvasItemVisibilityHandler(canvasItem);
                     break;
                 }
@@ -156,11 +164,12 @@ namespace Bigmonte.Essentials
         {
             if (!_visibilityHandler.IsVisible) return;
 
-            if (_fixedUpdateMethod != null) _fixedUpdateMethod.Invoke(_referencedNode, null);
+            if (_lateUpdateMethod != null) _lateUpdateMethod.Invoke(_referencedNode, null);
         }
 
         public void FixedUpdate()
         {
+            
             if (!_visibilityHandler.IsVisible) return;
             
             if (!_startCalled)
