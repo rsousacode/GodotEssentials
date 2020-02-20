@@ -77,6 +77,20 @@ namespace Bigmonte.Essentials
             InitUltraController();
 
             if (_awakeMethod != null) _awakeMethod.Invoke(_referencedNode, null);
+
+            if (_startCalled) return;
+            
+            OnVisibilityChange();
+
+            _startCalled = true;
+
+
+            if (_startMethod != null)
+            {
+                var o = _startMethod.Invoke(_referencedNode, null);
+            }
+
+            if (_startMethodCr != null) StartCoroutine(r);
         }
 
 
@@ -114,27 +128,6 @@ namespace Bigmonte.Essentials
 
         public void Process()
         {
-            // try
-            // {
-
-            if (!_visibilityHandler.IsVisible) return; // Added to avoid running after deactivating node
-            
-            if (!_startCalled)
-            {
-                OnVisibilityChange();
-
-                _startCalled = true;
-
-
-                if (_startMethod != null)
-                {
-                    var o = _startMethod.Invoke(_referencedNode, null);
-                }
-
-                if (_startMethodCr != null) StartCoroutine(r);
-
-            }
-            
             if (!_visibilityHandler.IsVisible) return;
 
             if (_processMethod != null)
@@ -143,8 +136,12 @@ namespace Bigmonte.Essentials
             }
             
             if (!_visibilityHandler.IsVisible) return;  // Added to avoid running after deactivating node
+            
+            HandleCoroutines();
+        }
 
-
+        private void HandleCoroutines()
+        {
             for (var i = 0; i < _coroutines.Count; i++)
             {
                 var yielded = _coroutines[i].Current is CustomYieldInstruction yielder && yielder.MoveNext();
@@ -153,11 +150,6 @@ namespace Bigmonte.Essentials
                 _coroutines.RemoveAt(i);
                 i--;
             }
-            //}
-            // catch (Exception e)
-            // {
-            //     GD.PrintErr("[-] Update Exception: " + e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n"  + e.InnerException + "\n\n" + e.TargetSite);
-            // }
         }
 
         public void LateUpdate()
@@ -171,25 +163,7 @@ namespace Bigmonte.Essentials
         {
             
             if (!_visibilityHandler.IsVisible) return;
-            
-            if (!_startCalled)
-            {
-                OnVisibilityChange();
-
-                _startCalled = true;
-
-
-                if (_startMethod != null)
-                {
-                    var o = _startMethod.Invoke(_referencedNode, null);
-                }
-
-                if (_startMethodCr != null) StartCoroutine(r);
-
-            }
-            
-            if (!_visibilityHandler.IsVisible) return;
-
+ 
             if (_fixedUpdateMethod != null) _fixedUpdateMethod.Invoke(_referencedNode, null);
         }
 
@@ -238,7 +212,8 @@ namespace Bigmonte.Essentials
             {
                 _onEnabledMethod.Invoke(_referencedNode, null);
             }
-            else if (!curVisibility && _onDisabledMethod != null)
+            
+            if (!curVisibility && _onDisabledMethod != null)
             {
                 _onDisabledMethod.Invoke(_referencedNode, null);
             }

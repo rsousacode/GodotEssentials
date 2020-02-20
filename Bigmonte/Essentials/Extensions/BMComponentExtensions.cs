@@ -193,6 +193,17 @@ namespace Bigmonte.Essentials
             return (double) num < (double) Mathf.Epsilon ? Vector3.Zero : onNormal * vector.Dot( onNormal) / num;
         }
 
+        public static float Center(this CapsuleShape capsuleShape)
+        {
+            return capsuleShape.Height * 0.5f;
+        }
+        
+        public static float Center(this BoxShape boxShape)
+        {
+            return boxShape.Extents.x * 0.5f;
+        }
+        
+
 
     }
 }
