@@ -95,7 +95,6 @@ namespace Bigmonte.Essentials
 
             if (attr != null)
             {
-                //_monoNodes.Add(currentNode);
                 _monoNodes[_monoNodes.Count] = currentNode;
                 _ultras[currentNode] = new UltraController(currentNode);
                 _ultras[currentNode].Awake();
