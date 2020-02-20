@@ -19,7 +19,7 @@ namespace Bigmonte.Essentials
         private MethodInfo _lateUpdateMethod;
         private MethodInfo _onDisabledMethod;
         private MethodInfo _onEnabledMethod;
-        private bool _prevVisibility ;
+        private bool? _prevVisibility;
 
 
         private bool _startCalled;
@@ -75,22 +75,24 @@ namespace Bigmonte.Essentials
         private void SetupUltraController()
         {
             InitUltraController();
-
+            
             if (_awakeMethod != null) _awakeMethod.Invoke(_referencedNode, null);
-
-            if (_startCalled) return;
             
             OnVisibilityChange();
 
-            _startCalled = true;
+            if (!_visibilityHandler.IsVisible) return;
 
-
-            if (_startMethod != null)
+            if (!_startCalled)
             {
-                var o = _startMethod.Invoke(_referencedNode, null);
-            }
+                _startCalled = true;
 
-            if (_startMethodCr != null) StartCoroutine(r);
+                if (_startMethod != null)
+                {
+                    var o = _startMethod.Invoke(_referencedNode, null);
+                }
+
+                if (_startMethodCr != null) StartCoroutine(r);
+            }
         }
 
 
