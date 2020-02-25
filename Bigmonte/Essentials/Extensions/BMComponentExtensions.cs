@@ -114,6 +114,11 @@ namespace Bigmonte.Essentials
             BMAutoLoad.Instance.UpdateNodeVisibility(node, status);
         }
 
+        public static bool IsActive(this Node node)
+        {
+            return BMAutoLoad.Instance.CheckIfNodeIsActive(node);
+        }
+
 
         /// <summary>
         ///     Godot usually instantiates objects at the left origin

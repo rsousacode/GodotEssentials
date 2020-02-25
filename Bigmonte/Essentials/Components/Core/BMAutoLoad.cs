@@ -43,6 +43,22 @@ namespace Bigmonte.Essentials
             _monoNodesToDelete.Add(node);
         }
 
+        // Returns false if invalid
+        public bool CheckIfNodeIsActive(Node c)
+        {
+           
+            var p =  c.GetType().GetProperty("Visible");
+            if (p != null)
+            {
+                
+                return p.GetValue(c) is bool && (bool) p.GetValue(c);
+
+            }
+
+            return false;
+
+        }
+
 
         public void Quit()
         {
@@ -152,7 +168,7 @@ namespace Bigmonte.Essentials
             if (visibleProperty != null)
             {
                 visibleProperty.SetValue(c, visible);
-                
+
             }
         }
 

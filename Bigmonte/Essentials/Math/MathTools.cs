@@ -491,13 +491,13 @@ namespace Bigmonte.Essentials
         public static float SmoothDamp(float current, float target, ref float currentVelocity, float smoothTime,
             float maxSpeed)
         {
-            var deltaTime = Time.deltaTime;
+            var deltaTime = Time.fixedDeltaTime;
             return SmoothDamp(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
         }
 
         public static float SmoothDamp(float current, float target, ref float currentVelocity, float smoothTime)
         {
-            var deltaTime = Time.deltaTime;
+            var deltaTime = Time.fixedDeltaTime;
             var maxSpeed = float.PositiveInfinity;
             return SmoothDamp(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
         }
@@ -529,13 +529,13 @@ namespace Bigmonte.Essentials
         public static float SmoothDampAngle(float current, float target, ref float currentVelocity, float smoothTime,
             float maxSpeed)
         {
-            var deltaTime = Time.deltaTime;
+            var deltaTime = Time.fixedDeltaTime;
             return SmoothDampAngle(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
         }
 
         public static float SmoothDampAngle(float current, float target, ref float currentVelocity, float smoothTime)
         {
-            var deltaTime = Time.deltaTime;
+            var deltaTime = Time.fixedDeltaTime;
             var maxSpeed = float.PositiveInfinity;
             return SmoothDampAngle(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
         }
@@ -589,6 +589,48 @@ namespace Bigmonte.Essentials
             var f1 = value - minVal;
             var f2 = maxVal - minVal;
             return f1 % f2 + minVal;
+        }
+        public static Vector3 GetTransformForward(Spatial v)
+        {
+            Quat q = new Quat(v.Transform.basis);
+            Vector3 t = MathTools.QuatVector3Multiplication(q, Vector3.Forward);
+            return t;
+        }
+
+        public static void SetTransformForward(Spatial v, Vector3 toSet)
+        {
+            var t = new Transform();
+            t.basis.z = toSet;
+            v.Transform = t;
+        }
+
+        
+        public static Vector3 GetEulerAngles(Spatial v)
+        {
+            Quat q = new Quat(v.Transform.basis);
+            Vector3 e = q.GetEuler();
+            return e;
+        }
+        
+        public static Vector3 QuatVector3Multiplication(Quat rotation, Vector3 point)
+        {
+            float num1 = rotation.x * 2f;
+            float num2 = rotation.y * 2f;
+            float num3 = rotation.z * 2f;
+            float num4 = rotation.x * num1;
+            float num5 = rotation.y * num2;
+            float num6 = rotation.z * num3;
+            float num7 = rotation.x * num2;
+            float num8 = rotation.x * num3;
+            float num9 = rotation.y * num3;
+            float num10 = rotation.w * num1;
+            float num11 = rotation.w * num2;
+            float num12 = rotation.w * num3;
+            Vector3 vector3;
+            vector3.x = (float) ((1.0 - ((double) num5 + (double) num6)) * (double) point.x + ((double) num7 - (double) num12) * (double) point.y + ((double) num8 + (double) num11) * (double) point.z);
+            vector3.y = (float) (((double) num7 + (double) num12) * (double) point.x + (1.0 - ((double) num4 + (double) num6)) * (double) point.y + ((double) num9 - (double) num10) * (double) point.z);
+            vector3.z = (float) (((double) num8 - (double) num11) * (double) point.x + ((double) num9 + (double) num10) * (double) point.y + (1.0 - ((double) num4 + (double) num5)) * (double) point.z);
+            return vector3;
         }
     }
 }
