@@ -20,12 +20,12 @@ namespace Bigmonte.Essentials
         private MethodInfo _onDisabledMethod;
         private MethodInfo _onEnabledMethod;
         private bool? _prevVisibility;
+        private MethodInfo _processMethod;
 
 
         private bool _startCalled;
         private MethodInfo _startMethod;
         private MethodInfo _startMethodCr;
-        private MethodInfo _processMethod;
 
         private VisibilityHandler _visibilityHandler;
 
@@ -75,9 +75,9 @@ namespace Bigmonte.Essentials
         private void SetupUltraController()
         {
             InitUltraController();
-            
+
             if (_awakeMethod != null) _awakeMethod.Invoke(_referencedNode, null);
-            
+
             OnVisibilityChange();
 
             if (!_visibilityHandler.IsVisible) return;
@@ -136,9 +136,9 @@ namespace Bigmonte.Essentials
             {
                 var o = _processMethod.Invoke(_referencedNode, null);
             }
-            
-            if (!_visibilityHandler.IsVisible) return;  // Added to avoid running after deactivating node
-            
+
+            if (!_visibilityHandler.IsVisible) return; // Added to avoid running after deactivating node
+
             HandleCoroutines();
         }
 
@@ -163,9 +163,8 @@ namespace Bigmonte.Essentials
 
         public void FixedUpdate()
         {
-            
             if (!_visibilityHandler.IsVisible) return;
- 
+
             if (_fixedUpdateMethod != null) _fixedUpdateMethod.Invoke(_referencedNode, null);
         }
 
@@ -182,43 +181,27 @@ namespace Bigmonte.Essentials
 
         public void ActivateNode(bool status)
         {
-            if (status == _visibilityHandler.IsVisible)
-            {
-                return;
-            }
+            if (status == _visibilityHandler.IsVisible) return;
 
             var visibleProperty = _referencedNode.GetType().GetProperty("Visible");
 
-            if (visibleProperty != null)
-            {
-                visibleProperty.SetValue(_referencedNode, status);
-            }
+            if (visibleProperty != null) visibleProperty.SetValue(_referencedNode, status);
 
             _visibilityHandler.SetVisibility(status);
 
             OnVisibilityChange();
         }
-        
+
 
         private void OnVisibilityChange()
         {
-            
             var curVisibility = _visibilityHandler.IsVisible;
 
-            if (curVisibility == _prevVisibility)
-            {
-                return;
-            }
+            if (curVisibility == _prevVisibility) return;
 
-            if (curVisibility && _onEnabledMethod != null)
-            {
-                _onEnabledMethod.Invoke(_referencedNode, null);
-            }
-            
-            if (!curVisibility && _onDisabledMethod != null)
-            {
-                _onDisabledMethod.Invoke(_referencedNode, null);
-            }
+            if (curVisibility && _onEnabledMethod != null) _onEnabledMethod.Invoke(_referencedNode, null);
+
+            if (!curVisibility && _onDisabledMethod != null) _onDisabledMethod.Invoke(_referencedNode, null);
 
             _prevVisibility = curVisibility;
         }

@@ -9,23 +9,17 @@ namespace Bigmonte.Essentials
     {
         protected static BMAutoLoad _instance;
 
+        private readonly Dictionary<int, Node> _monoNodes = new Dictionary<int, Node>();
+
+        private readonly List<Node> _monoNodesToDelete = new List<Node>();
+        private readonly Dictionary<Node, UltraController> _ultras = new Dictionary<Node, UltraController>();
+
         public BMAutoLoad()
         {
             _instance = this;
         }
 
-        public static BMAutoLoad Instance
-        {
-            get
-            {
-                return _instance;
-            }
-        }
-
-        private readonly Dictionary<int, Node> _monoNodes = new Dictionary<int, Node>();
-
-        private readonly List<Node> _monoNodesToDelete = new List<Node>();
-        private readonly Dictionary<Node, UltraController> _ultras = new Dictionary<Node, UltraController>();
+        public static BMAutoLoad Instance => _instance;
 
 
         public override void _Ready()
@@ -35,7 +29,7 @@ namespace Bigmonte.Essentials
             GetTree().Connect("node_added", this, "_node_added");
             InitialScan();
         }
-        
+
         public void DeleteNode(Node node)
         {
             MarkForDeletion(node);
@@ -46,17 +40,10 @@ namespace Bigmonte.Essentials
         // Returns false if invalid
         public bool CheckIfNodeIsActive(Node c)
         {
-           
-            var p =  c.GetType().GetProperty("Visible");
-            if (p != null)
-            {
-                
-                return p.GetValue(c) is bool && (bool) p.GetValue(c);
-
-            }
+            var p = c.GetType().GetProperty("Visible");
+            if (p != null) return p.GetValue(c) is bool && (bool) p.GetValue(c);
 
             return false;
-
         }
 
 
@@ -90,13 +77,12 @@ namespace Bigmonte.Essentials
         public override void _PhysicsProcess(float delta)
         {
             Time.fixedDeltaTime = delta;
-            
+
             for (var i = 0; i < _monoNodes.Count; i++)
             {
                 var n = _monoNodes[i];
                 _ultras[n].FixedUpdate();
             }
-            
         }
 
 
@@ -133,16 +119,15 @@ namespace Bigmonte.Essentials
 
         public void UpdateNodeVisibility(Node node, bool visible)
         {
-            if (!_ultras.ContainsKey(node) )
+            if (!_ultras.ContainsKey(node))
             {
                 RefreshVisibilityAttribute(visible, node);
                 UpdateChildrensVisibility(node, visible);
                 return;
             }
-      
+
             _ultras[node].ActivateNode(visible);
             UpdateChildrensVisibility(node, visible);
-
         }
 
         private void UpdateChildrensVisibility(Node node, bool visible)
@@ -156,6 +141,7 @@ namespace Bigmonte.Essentials
                     RefreshVisibilityAttribute(visible, c);
                     continue;
                 }
+
                 _ultras[c].ActivateNode(visible);
                 UpdateChildrensVisibility(c, visible);
             }
@@ -165,20 +151,17 @@ namespace Bigmonte.Essentials
         {
             var visibleProperty = c.GetType().GetProperty("Visible");
 
-            if (visibleProperty != null)
-            {
-                visibleProperty.SetValue(c, visible);
-
-            }
+            if (visibleProperty != null) visibleProperty.SetValue(c, visible);
         }
 
         private void RemoveNode(Node node)
         {
             if (_monoNodes.ContainsValue(node))
             {
-                int GetKey = _monoNodes.FirstOrDefault(x => x.Value == node).Key;
+                var GetKey = _monoNodes.FirstOrDefault(x => x.Value == node).Key;
                 _monoNodes.Remove(GetKey);
             }
+
             _ultras[node].ActivateNode(false);
             _ultras.Remove(node);
             node.QueueFree();

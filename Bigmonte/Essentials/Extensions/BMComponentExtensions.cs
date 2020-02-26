@@ -22,19 +22,13 @@ namespace Bigmonte.Essentials
 
         public static T GetComponentInParent<T>(this Node node) where T : Node
         {
-            Node currentNode = node.GetParent();
+            var currentNode = node.GetParent();
             do
             {
-                if (currentNode is T)
-                {
-                    return currentNode as T;
-                }
+                if (currentNode is T node1) return node1;
                 currentNode = currentNode.GetComponentInChildren<T>();
                 
-                if (currentNode != null)
-                {
-                    return currentNode as T;
-                }
+                if (currentNode != null) return currentNode as T;
 
                 currentNode = currentNode.GetParent();
 
@@ -42,7 +36,7 @@ namespace Bigmonte.Essentials
 
             return null;
         }
-        
+
         public static T[] GetComponentsInParent<T>(this Node node) where T : Node
         {
             var components = new List<T>();
@@ -79,7 +73,7 @@ namespace Bigmonte.Essentials
 
             return components.ToArray();
         }
-        
+
         public static T GetComponentInChildren<T>(this Node node) where T : Node
         {
             return FindChild<T>(node);
@@ -89,7 +83,7 @@ namespace Bigmonte.Essentials
         {
             var childCount = parent.GetChildCount();
 
-            if (parent is T) return parent as T;
+            if (parent is T node1) return node1;
 
             if (childCount <= 0) return null;
             for (var i = 0; i < childCount; i++)
@@ -160,7 +154,7 @@ namespace Bigmonte.Essentials
         {
             var childCount = parent.GetChildCount();
 
-            if (parent is T) components.Add(parent as T);
+            if (parent is T node) components.Add(node);
 
             if (childCount > 0)
                 for (var i = 0; i < childCount; i++)
@@ -194,7 +188,7 @@ namespace Bigmonte.Essentials
                 
         public static Vector3 ProjectOnNormal(Vector3 vector, Vector3 onNormal)
         {
-            float num = onNormal.Dot(onNormal);
+            var num = onNormal.Dot(onNormal);
             return (double) num < (double) Mathf.Epsilon ? Vector3.Zero : onNormal * vector.Dot( onNormal) / num;
         }
 
@@ -202,13 +196,10 @@ namespace Bigmonte.Essentials
         {
             return capsuleShape.Height * 0.5f;
         }
-        
+
         public static float Center(this BoxShape boxShape)
         {
             return boxShape.Extents.x * 0.5f;
         }
-        
-
-
     }
 }

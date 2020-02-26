@@ -11,7 +11,7 @@ namespace Bigmonte.Essentials
         {
             this.spatial = spatial;
         }
-        
+
         public override bool IsVisible
         {
             get
@@ -21,7 +21,7 @@ namespace Bigmonte.Essentials
                 return false;
             }
         }
-        
+
         public override void SetVisibility(bool status)
         {
             _visibility = status;

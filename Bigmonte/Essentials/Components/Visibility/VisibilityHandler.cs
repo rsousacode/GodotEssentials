@@ -2,13 +2,9 @@ namespace Bigmonte.Essentials
 {
     internal class VisibilityHandler
     {
-        public virtual bool IsVisible
-        {
-            get { return _visibility; }
-            
-        }
-
         protected bool _visibility = true;
+
+        public virtual bool IsVisible => _visibility;
 
         public virtual void SetVisibility(bool status)
         {

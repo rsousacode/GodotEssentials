@@ -74,16 +74,6 @@ namespace Bigmonte.Essentials
             return (float) Math.Asin(f);
         }
 
-        public static float Atan(float f)
-        {
-            return (float) Math.Atan(f);
-        }
-
-        public static float Atan2(float y, float x)
-        {
-            return (float) Math.Atan2(y, x);
-        }
-
         public static float Ceil(float f)
         {
             return (float) Math.Ceiling(f);
@@ -590,10 +580,11 @@ namespace Bigmonte.Essentials
             var f2 = maxVal - minVal;
             return f1 % f2 + minVal;
         }
+
         public static Vector3 GetTransformForward(Spatial v)
         {
-            Quat q = new Quat(v.Transform.basis);
-            Vector3 t = MathTools.QuatVector3Multiplication(q, Vector3.Forward);
+            var q = new Quat(v.Transform.basis);
+            var t = QuatVector3Multiplication(q, Vector3.Forward);
             return t;
         }
 
@@ -604,32 +595,35 @@ namespace Bigmonte.Essentials
             v.Transform = t;
         }
 
-        
+
         public static Vector3 GetEulerAngles(Spatial v)
         {
-            Quat q = new Quat(v.Transform.basis);
-            Vector3 e = q.GetEuler();
+            var q = new Quat(v.Transform.basis);
+            var e = q.GetEuler();
             return e;
         }
-        
+
         public static Vector3 QuatVector3Multiplication(Quat rotation, Vector3 point)
         {
-            float num1 = rotation.x * 2f;
-            float num2 = rotation.y * 2f;
-            float num3 = rotation.z * 2f;
-            float num4 = rotation.x * num1;
-            float num5 = rotation.y * num2;
-            float num6 = rotation.z * num3;
-            float num7 = rotation.x * num2;
-            float num8 = rotation.x * num3;
-            float num9 = rotation.y * num3;
-            float num10 = rotation.w * num1;
-            float num11 = rotation.w * num2;
-            float num12 = rotation.w * num3;
+            var num1 = rotation.x * 2f;
+            var num2 = rotation.y * 2f;
+            var num3 = rotation.z * 2f;
+            var num4 = rotation.x * num1;
+            var num5 = rotation.y * num2;
+            var num6 = rotation.z * num3;
+            var num7 = rotation.x * num2;
+            var num8 = rotation.x * num3;
+            var num9 = rotation.y * num3;
+            var num10 = rotation.w * num1;
+            var num11 = rotation.w * num2;
+            var num12 = rotation.w * num3;
             Vector3 vector3;
-            vector3.x = (float) ((1.0 - ((double) num5 + (double) num6)) * (double) point.x + ((double) num7 - (double) num12) * (double) point.y + ((double) num8 + (double) num11) * (double) point.z);
-            vector3.y = (float) (((double) num7 + (double) num12) * (double) point.x + (1.0 - ((double) num4 + (double) num6)) * (double) point.y + ((double) num9 - (double) num10) * (double) point.z);
-            vector3.z = (float) (((double) num8 - (double) num11) * (double) point.x + ((double) num9 + (double) num10) * (double) point.y + (1.0 - ((double) num4 + (double) num5)) * (double) point.z);
+            vector3.x = (float) ((1.0 - (num5 + (double) num6)) * point.x + (num7 - (double) num12) * point.y +
+                                 (num8 + (double) num11) * point.z);
+            vector3.y = (float) ((num7 + (double) num12) * point.x + (1.0 - (num4 + (double) num6)) * point.y +
+                                 (num9 - (double) num10) * point.z);
+            vector3.z = (float) ((num8 - (double) num11) * point.x + (num9 + (double) num10) * point.y +
+                                 (1.0 - (num4 + (double) num5)) * point.z);
             return vector3;
         }
     }
