@@ -547,7 +547,10 @@ namespace Bigmonte.Essentials
         public static Vector3 Vector3Lerp(Vector3 a, Vector3 b, float t)
         {
             t = Clamp01(t);
-            return new Vector3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
+            var o1 = a.x + (b.x - a.x) * t;
+            var o2 = a.y + (b.y - a.y) * t;
+            var o3 = a.z + (b.z - a.z) * t;
+            return new Vector3(o1, o2 , o3);
         }
 
         public static Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t)

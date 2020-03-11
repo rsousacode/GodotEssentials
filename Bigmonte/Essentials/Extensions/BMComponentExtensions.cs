@@ -26,10 +26,7 @@ namespace Bigmonte.Essentials
             do
             {
                 if (currentNode is T node1) return node1;
-                currentNode = currentNode.GetComponentInChildren<T>();
                 
-                if (currentNode != null) return currentNode as T;
-
                 currentNode = currentNode.GetParent();
 
             } while (currentNode != null);
