@@ -78,8 +78,6 @@ namespace Bigmonte.Essentials
                                                           // We run at twice the speed since we reduce jitter and increases the engine gravity strength 
                                                          // Thi
         {
-            //Time.fixedDeltaTime = delta;
-            Time.fixedDeltaTime = delta;
 
             for (var i = 0; i < _monoNodes.Count; i++)
             {
@@ -87,13 +85,14 @@ namespace Bigmonte.Essentials
                 _ultras[n].FixedUpdate();
             }
             
-            Time.fixedDeltaTime = delta + delta; // 
-
             for (var i = 0; i < _monoNodes.Count; i++)
             {
                 var n = _monoNodes[i];
                 _ultras[n].FixedUpdate();
             }
+            
+            Time.fixedDeltaTime = delta;
+
         }
 
 
