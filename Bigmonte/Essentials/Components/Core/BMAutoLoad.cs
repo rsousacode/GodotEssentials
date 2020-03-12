@@ -74,9 +74,20 @@ namespace Bigmonte.Essentials
         }
 
 
-        public override void _PhysicsProcess(float delta)
+        public override void _PhysicsProcess(float delta) 
+                                                          // We run at twice the speed since we reduce jitter and increases the engine gravity strength 
+                                                         // Thi
         {
+            //Time.fixedDeltaTime = delta;
             Time.fixedDeltaTime = delta;
+
+            for (var i = 0; i < _monoNodes.Count; i++)
+            {
+                var n = _monoNodes[i];
+                _ultras[n].FixedUpdate();
+            }
+            
+            Time.fixedDeltaTime = delta + delta; // 
 
             for (var i = 0; i < _monoNodes.Count; i++)
             {
@@ -95,7 +106,11 @@ namespace Bigmonte.Essentials
         {
             var attr = currentNode.GetType().GetCustomAttribute<Extended>();
 
-            if (attr != null)
+           // if (_ultras.ContainsKey(currentNode)) return;
+            
+            if (attr != null  && !_ultras.ContainsKey(currentNode) ) // This will cause to Start And Awake to be called twice when
+                                                                        // the node is added manually. If that one is uncommented
+                                                                        // It will mess all the physics 
             {
                 _monoNodes[_monoNodes.Count] = currentNode;
                 _ultras[currentNode] = new UltraController(currentNode);

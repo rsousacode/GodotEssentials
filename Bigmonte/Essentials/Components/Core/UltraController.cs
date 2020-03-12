@@ -23,7 +23,7 @@ namespace Bigmonte.Essentials
         private MethodInfo _processMethod;
 
 
-        private bool _startCalled;
+        public bool _startCalled;
         private MethodInfo _startMethod;
         private MethodInfo _startMethodCr;
 
@@ -75,6 +75,7 @@ namespace Bigmonte.Essentials
         private void SetupUltraController()
         {
             InitUltraController();
+            
 
             if (_awakeMethod != null) _awakeMethod.Invoke(_referencedNode, null);
 
@@ -93,6 +94,7 @@ namespace Bigmonte.Essentials
 
                 if (_startMethodCr != null) StartCoroutine(r);
             }
+            
         }
 
 
@@ -190,6 +192,8 @@ namespace Bigmonte.Essentials
             _visibilityHandler.SetVisibility(status);
 
             OnVisibilityChange();
+            GD.Print("Activate Node: " +  _referencedNode.Name);
+
         }
 
 
@@ -204,6 +208,7 @@ namespace Bigmonte.Essentials
             if (!curVisibility && _onDisabledMethod != null) _onDisabledMethod.Invoke(_referencedNode, null);
 
             _prevVisibility = curVisibility;
+            
         }
     }
 }
