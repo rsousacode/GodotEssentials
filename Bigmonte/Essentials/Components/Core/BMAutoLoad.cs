@@ -75,24 +75,14 @@ namespace Bigmonte.Essentials
 
 
         public override void _PhysicsProcess(float delta) 
-                                                          // We run at twice the speed since we reduce jitter and increases the engine gravity strength 
-                                                         // Thi
-        {
-
-            for (var i = 0; i < _monoNodes.Count; i++)
-            {
-                var n = _monoNodes[i];
-                _ultras[n].FixedUpdate();
-            }
-            
-            for (var i = 0; i < _monoNodes.Count; i++)
-            {
-                var n = _monoNodes[i];
-                _ultras[n].FixedUpdate();
-            }
-            
+        {            
             Time.fixedDeltaTime = delta;
-
+            
+            for (var i = 0; i < _monoNodes.Count; i++)
+            {
+                var n = _monoNodes[i];
+                _ultras[n].FixedUpdate();
+            }
         }
 
 
@@ -105,18 +95,17 @@ namespace Bigmonte.Essentials
         {
             var attr = currentNode.GetType().GetCustomAttribute<Extended>();
 
-           // if (_ultras.ContainsKey(currentNode)) return;
-            
-            if (attr != null  && !_ultras.ContainsKey(currentNode) ) // This will cause to Start And Awake to be called twice when
-                                                                        // the node is added manually. If that one is uncommented
-                                                                        // It will mess all the physics 
+           if (attr != null  && !_ultras.ContainsKey(currentNode) )
             {
                 _monoNodes[_monoNodes.Count] = currentNode;
                 _ultras[currentNode] = new UltraController(currentNode);
                 _ultras[currentNode].Awake();
             }
 
-            for (var i = 0; i < currentNode.GetChildCount(); i++) CheckNode(currentNode.GetChild(i));
+            for (var i = currentNode.GetChildCount() - 1; i >= 0; i--)
+            {
+                CheckNode(currentNode.GetChild(i));
+            }
         }
 
 

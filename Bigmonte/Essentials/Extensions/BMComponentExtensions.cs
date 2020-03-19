@@ -26,7 +26,9 @@ namespace Bigmonte.Essentials
             do
             {
                 if (currentNode is T node1) return node1;
-                
+
+                var child = currentNode.GetComponentInChildren<T>();
+                if (child is T c) return c;
                 currentNode = currentNode.GetParent();
 
             } while (currentNode != null);
@@ -47,6 +49,14 @@ namespace Bigmonte.Essentials
 
             return components.ToArray();
         }
+        
+       // public static void SetSize(Control rectTransform, Vector2 newSize) 
+        //{
+            //Vector2 currSize = rectTransform.rect.size;
+            //Vector2 sizeDiff = newSize - currSize;
+            //rectTransform.RectPivotOffset = rectTransform.offsetMin - new Vector2(sizeDiff.x * rectTransform.pivot.x, sizeDiff.y * rectTransform.pivot.y);
+            //rectTransform.offsetMax = rectTransform.offsetMax + new Vector2(sizeDiff.x * (1.0f - rectTransform.pivot.x), sizeDiff.y * (1.0f - rectTransform.pivot.y));
+        //}
 
         public static T[] FindObjectsOfType<T>(this Node node) where T : Node
         {
@@ -104,6 +114,15 @@ namespace Bigmonte.Essentials
         {
             BMAutoLoad.Instance.UpdateNodeVisibility(node, status);
         }
+
+        public static void SetModulateAlpha(this Control node, float alphaToSet)
+        {
+            Color m = node.Modulate;
+            m.a = alphaToSet;
+            node.Modulate = m;
+
+        }
+        
 
         public static bool IsActive(this Node node)
         {

@@ -24,18 +24,63 @@ namespace Bigmonte.Essentials
             return v;
         }
 
+        public static void SetRotation(this Transform transform, Quat newRotation)
+        {
+            var t = new Quat(transform.basis).Slerp(newRotation, Time.fixedDeltaTime);
+            transform = new Transform(t, transform.origin);
+        }
+
 
         public static Node Instantiate(this Node node, string path, Node parent)
         {
             var v = PackedSceneInstance(path);
-            parent.AddChild(v);
+            node.AddChild(v);
             return v;
         }
 
+        
+        public static T Instantiate<T>(this Node node, string path, Vector3 pos) where T : Node
+        {
+            var v = PackedSceneInstance(path);
+            node.AddChild(v);
+            if (node is Spatial spatial)
+            {
+                var newTransform = spatial.Transform;
+                newTransform.origin = pos;
+                spatial.Transform = newTransform;
+            }
+
+            return v as T;
+        }
+        
+        public static T Instantiate<T>(this Node node, string path, Transform pos) where T : Node
+        {
+            var v = PackedSceneInstance(path);
+            node.AddChild(v);
+            if (node is Spatial spatial)
+            {
+                spatial.Transform = pos;
+            }
+
+            return v as T;
+        }
+        
+        public static T Instantiate<T>(this Node node, string path, Transform2D pos) where T : Node
+        {
+            var v = PackedSceneInstance(path);
+            node.AddChild(v);
+            if (node is Node2D spatial)
+            {
+                spatial.Transform = pos;
+            }
+
+            return v as T;
+        }
+        
         public static T Instantiate<T>(this Node node, string path, Node parent) where T : Node
         {
             var v = PackedSceneInstance(path);
-            parent.AddChild(v);
+            node.AddChild(v);
             return v as T;
         }
 
