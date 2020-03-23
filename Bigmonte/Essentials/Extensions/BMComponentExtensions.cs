@@ -85,6 +85,12 @@ namespace Bigmonte.Essentials
         {
             return FindChild<T>(node);
         }
+        
+        public static T GetComponentInChildren<T>(this Viewport node) where T : Node
+        {
+            return FindChild<T>(node);
+        }
+        
 
         private static T FindChild<T>(Node parent) where T : Node
         {
@@ -164,6 +170,14 @@ namespace Bigmonte.Essentials
             CollectChildComponents(node, components);
             return components.ToArray();
         }
+        
+        public static T[] GetComponentsInChildren<T>(this Viewport viewport) where T : Node
+        {
+            var components = new List<T>();
+            CollectChildComponents(viewport, components);
+            return components.ToArray();
+        }
+        
 
 
         private static void CollectChildComponents<T>(Node parent, List<T> components) where T : Node
@@ -180,6 +194,7 @@ namespace Bigmonte.Essentials
         public static void Destroy(this Node node)
         {
             BMAutoLoad.Instance.DeleteNode(node);
+            
         }
 
 

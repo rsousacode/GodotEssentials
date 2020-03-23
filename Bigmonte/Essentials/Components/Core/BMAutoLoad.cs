@@ -32,9 +32,17 @@ namespace Bigmonte.Essentials
 
         public void DeleteNode(Node node)
         {
-            MarkForDeletion(node);
-            if (!_ultras.ContainsKey(node)) return;
-            _monoNodesToDelete.Add(node);
+            if (_ultras.ContainsKey(node))
+            {
+                MarkForDeletion(node);
+                
+                if (!_monoNodesToDelete.Contains(node))
+                {
+                    _monoNodesToDelete.Add(node);
+
+                }
+            }
+
         }
 
         // Returns false if invalid
@@ -69,8 +77,6 @@ namespace Bigmonte.Essentials
             if (_monoNodesToDelete.Count == 0) return;
 
             for (var i = 0; i < _monoNodesToDelete.Count; i++) RemoveNode(_monoNodesToDelete[i]);
-
-            _monoNodesToDelete.Clear();
         }
 
 
@@ -168,6 +174,7 @@ namespace Bigmonte.Essentials
             _ultras[node].ActivateNode(false);
             _ultras.Remove(node);
             node.QueueFree();
+            _monoNodesToDelete.Remove(node);
         }
 
         private void MarkForDeletion(Node node)
@@ -175,13 +182,18 @@ namespace Bigmonte.Essentials
             var inspect = node;
 
             var cs = inspect.GetChildren();
+           // _monoNodesToDelete.Add(node);
+
             for (var i = 0; i < cs.Count; i++)
             {
                 var c = cs[i] as Node;
-                if (!_ultras.ContainsKey(c)) continue;
-                _monoNodesToDelete.Add(c);
-                MarkForDeletion(c);
+                if (_ultras.ContainsKey(c))
+                {
+                    _monoNodesToDelete.Add(c);
+                    MarkForDeletion(c);
+                }
             }
+            
         }
     }
 }

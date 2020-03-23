@@ -192,7 +192,6 @@ namespace Bigmonte.Essentials
             _visibilityHandler.SetVisibility(status);
 
             OnVisibilityChange();
-            GD.Print("Activate Node: " +  _referencedNode.Name);
 
         }
 
