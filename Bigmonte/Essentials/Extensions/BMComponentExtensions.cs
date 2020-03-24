@@ -26,26 +26,43 @@ namespace Bigmonte.Essentials
             do
             {
                 if (currentNode is T node1) return node1;
-
+        
                 var child = currentNode.GetComponentInChildren<T>();
                 if (child is T c) return c;
                 currentNode = currentNode.GetParent();
-
+        
             } while (currentNode != null);
-
+        
             return null;
         }
+        
+        
+        public static T GetComponentInParentFromIndex<T>(this Node node, int i) where T : Node
+        {
+            Node parent = node.GetParent();
+            
+            while (i > 0)
+            {
+                i--;
+                parent = parent.GetParent();
+                if (parent is T returnNode && i == 0) return returnNode;
+
+            }
+
+            if (parent is T returnParent) return returnParent;
+            return null;
+        }
+        
+        
 
         public static T[] GetComponentsInParent<T>(this Node node) where T : Node
         {
             var components = new List<T>();
 
-            do
+            foreach (var n in node.Owner.GetComponentsInChildren<T>())
             {
-                if (node is T toAdd) components.Add(toAdd);
-
-                node = node.GetParent();
-            } while (node != null);
+               components.Add(n);
+            }
 
             return components.ToArray();
         }
@@ -85,12 +102,6 @@ namespace Bigmonte.Essentials
         {
             return FindChild<T>(node);
         }
-        
-        public static T GetComponentInChildren<T>(this Viewport node) where T : Node
-        {
-            return FindChild<T>(node);
-        }
-        
 
         private static T FindChild<T>(Node parent) where T : Node
         {
@@ -171,6 +182,23 @@ namespace Bigmonte.Essentials
             return components.ToArray();
         }
         
+        // public static T[] GetComponentsInParent<T>(this Node node) where T : Node
+        // {
+        //     var components = new List<T>();
+        //     int treeChildCount = node.GetTree().Root.GetChildCount();
+        //     int childCount = node.GetChildCount();
+        //
+        //     var count = treeChildCount - childCount;
+        //
+        //     if (node is T n1) components.Add(n1);
+        //
+        //     if (count > 0)
+        //         for (var i = 0; i < childCount; i++)
+        //             CollectChildComponents(node.GetComponentInParentFromIndex<T>(i), components);
+        //     return new T[0]; // TODO FIX
+        // }
+
+        
         public static T[] GetComponentsInChildren<T>(this Viewport viewport) where T : Node
         {
             var components = new List<T>();
@@ -178,8 +206,6 @@ namespace Bigmonte.Essentials
             return components.ToArray();
         }
         
-
-
         private static void CollectChildComponents<T>(Node parent, List<T> components) where T : Node
         {
             var childCount = parent.GetChildCount();
@@ -190,6 +216,17 @@ namespace Bigmonte.Essentials
                 for (var i = 0; i < childCount; i++)
                     CollectChildComponents(parent.GetChild(i), components);
         }
+         private static void CollectParentComponents<T>( Node n, List<T> components) where T : Node
+        {
+            var childCount = n.GetTree().Root.GetChildCount();
+
+            if (n is T node) components.Add(node);
+
+            if (childCount > 0)
+                for (var i = 0; i < childCount; i++)
+                    CollectParentComponents(n.GetComponentInParentFromIndex<T>(i) , components);
+        }
+        
 
         public static void Destroy(this Node node)
         {
