@@ -59,6 +59,7 @@
     <Compile Include="Bigmonte\Essentials\Components\Coroutines\CustomYieldInstruction.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Coroutines\WaitForSeconds.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Visibility\CanvasItemVisibilityHandler.cs" />
+    <Compile Include="Bigmonte\Essentials\Components\Visibility\ControlItemVisibilityHandler.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Visibility\SpatialVisibilityHandler.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Visibility\VisibilityHandler.cs" />
     <Compile Include="Bigmonte\Essentials\EssentialsAutoLoad.cs" />

@@ -202,6 +202,7 @@ namespace Bigmonte.Essentials
         {
             return a + (b - a) * Clamp01(t);
         }
+        
 
         public static float LerpAngle(float a, float b, float t)
         {
@@ -552,7 +553,16 @@ namespace Bigmonte.Essentials
             var o3 = a.z + (b.z - a.z) * t;
             return new Vector3(o1, o2 , o3);
         }
+     
 
+        public static Transform SetTransformForward( Transform t, Vector3 newRotation)
+        {
+            var lookDir = - newRotation - t.origin;
+            var rotationTransform =
+                t.LookingAt(t.origin + lookDir, new Vector3(0, 1, 0));
+            var thisRotation = new Quat(rotationTransform.basis);
+            return new Transform(thisRotation, t.origin);
+        }
         public static Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t)
         {
             t = Clamp01(t);
@@ -569,6 +579,11 @@ namespace Bigmonte.Essentials
         public static float Sqrt(float f)
         {
             return (float) Math.Sqrt(f);
+        }
+        
+        public static double Sqrt(double f)
+        {
+            return Math.Sqrt(f);
         }
 
         public static float Tan(float f)

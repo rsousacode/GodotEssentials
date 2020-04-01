@@ -26,23 +26,25 @@ namespace Bigmonte.Essentials
         {
             _instance = this;
 
-            GetTree().Connect("node_added", this, "_node_added");
+            GetTree().Connect("node_added", this, nameof(OnNodeAdded));
             InitialScan();
         }
 
-        public void DeleteNode(Node node)
+        public bool DeleteNode(Node node)
         {
             if (_ultras.ContainsKey(node))
             {
                 MarkForDeletion(node);
-                
+
                 if (!_monoNodesToDelete.Contains(node))
                 {
                     _monoNodesToDelete.Add(node);
-
                 }
+
+                return true;
             }
 
+            return false;
         }
 
         // Returns false if invalid
@@ -62,6 +64,9 @@ namespace Bigmonte.Essentials
             tree?.Quit();
         }
 
+        /// <summary>
+        ///    On _Process, we update every frame all of our nodes in the main thread
+        /// </summary>
         public override void _Process(float delta)
         {
             Time.time += delta;
@@ -80,10 +85,13 @@ namespace Bigmonte.Essentials
         }
 
 
-        public override void _PhysicsProcess(float delta) 
-        {            
+        /// <summary>
+        ///    On _PhysicsProcess, we run all of our physics process related nodes every physics frame
+        /// </summary>
+        public override void _PhysicsProcess(float delta)
+        {
             Time.fixedDeltaTime = delta;
-            
+
             for (var i = 0; i < _monoNodes.Count; i++)
             {
                 var n = _monoNodes[i];
@@ -101,21 +109,27 @@ namespace Bigmonte.Essentials
         {
             var attr = currentNode.GetType().GetCustomAttribute<Extended>();
 
-           if (attr != null  && !_ultras.ContainsKey(currentNode) )
+            if (attr != null && !_ultras.ContainsKey(currentNode))
             {
                 _monoNodes[_monoNodes.Count] = currentNode;
                 _ultras[currentNode] = new UltraController(currentNode);
                 _ultras[currentNode].Awake();
             }
 
-            for (var i = currentNode.GetChildCount() - 1; i >= 0; i--)
+
+            foreach (Node n in currentNode.GetChildren())
             {
-                CheckNode(currentNode.GetChild(i));
+                CheckNode(n);
             }
         }
 
+        public bool InUltras(Node node)
+        {
+            return _ultras.ContainsKey(node);
+        }
 
-        private void _node_added(Node node)
+
+        private void OnNodeAdded(Node node)
         {
             CheckNode(node);
         }
@@ -126,7 +140,7 @@ namespace Bigmonte.Essentials
             return _ultras.ContainsKey(node) ? _ultras[node] : null;
         }
 
-        public void UpdateNodeVisibility(Node node, bool visible)
+        public void SetActiveVisibility(Node node, bool visible)
         {
             if (!_ultras.ContainsKey(node))
             {
@@ -173,8 +187,9 @@ namespace Bigmonte.Essentials
 
             _ultras[node].ActivateNode(false);
             _ultras.Remove(node);
-            node.QueueFree();
             _monoNodesToDelete.Remove(node);
+            node.Free();
+
         }
 
         private void MarkForDeletion(Node node)
@@ -182,18 +197,16 @@ namespace Bigmonte.Essentials
             var inspect = node;
 
             var cs = inspect.GetChildren();
-           // _monoNodesToDelete.Add(node);
 
             for (var i = 0; i < cs.Count; i++)
             {
                 var c = cs[i] as Node;
+                
                 if (_ultras.ContainsKey(c))
                 {
                     _monoNodesToDelete.Add(c);
-                    MarkForDeletion(c);
                 }
             }
-            
         }
     }
 }

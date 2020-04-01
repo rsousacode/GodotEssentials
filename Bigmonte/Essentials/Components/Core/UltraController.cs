@@ -102,12 +102,19 @@ namespace Bigmonte.Essentials
         {
             switch (_referencedNode)
             {
+                case Control node:
+                {
+                    var control = node;
+                    _visibilityHandler = new ControlItemVisibilityHandler(control);
+                    break;
+                }
                 case Spatial node:
                 {
                     var spatial = node;
                     _visibilityHandler = new SpatialVisibilityHandler(spatial);
                     break;
                 }
+                
                 case CanvasItem item:
                 {
                     var canvasItem = item;
@@ -130,6 +137,9 @@ namespace Bigmonte.Essentials
         }
 
 
+        /// <summary>
+        ///    On Process, we update every frame 
+        /// </summary>
         public void Process()
         {
             if (!_visibilityHandler.IsVisible) return;

@@ -129,7 +129,7 @@ namespace Bigmonte.Essentials
         /// <param name="status"></param>
         public static void SetActive(this Node node, bool status)
         {
-            BMAutoLoad.Instance.UpdateNodeVisibility(node, status);
+            BMAutoLoad.Instance.SetActiveVisibility(node, status);
         }
 
         public static void SetModulateAlpha(this Control node, float alphaToSet)
@@ -139,7 +139,7 @@ namespace Bigmonte.Essentials
             node.Modulate = m;
 
         }
-        
+
 
         public static bool IsActive(this Node node)
         {
@@ -228,10 +228,14 @@ namespace Bigmonte.Essentials
         }
         
 
-        public static void Destroy(this Node node)
+        public static bool Destroy(this Node node)
         {
-            BMAutoLoad.Instance.DeleteNode(node);
-            
+            return BMAutoLoad.Instance.DeleteNode(node);
+        }
+        
+        public static bool InUltras(this Node node)
+        {
+            return BMAutoLoad.Instance.InUltras(node);
         }
 
 
@@ -268,6 +272,36 @@ namespace Bigmonte.Essentials
         public static float Center(this BoxShape boxShape)
         {
             return boxShape.Extents.x * 0.5f;
+        }
+   
+        
+        public static Quat Lerp(this Quat quaternion1, Quat quaternion2, float amount)
+        {
+            float num = amount;
+            float num2 = 1f - num;
+            Quat quaternion = new Quat();
+            float num5 = (((quaternion1.x * quaternion2.x) + (quaternion1.y * quaternion2.y)) + (quaternion1.z * quaternion2.z)) + (quaternion1.w * quaternion2.w);
+            if (num5 >= 0f)
+            {
+                quaternion.x = (num2 * quaternion1.x) + (num * quaternion2.x);
+                quaternion.y = (num2 * quaternion1.y) + (num * quaternion2.y);
+                quaternion.z = (num2 * quaternion1.z) + (num * quaternion2.z);
+                quaternion.w = (num2 * quaternion1.w) + (num * quaternion2.w);
+            }
+            else
+            {
+                quaternion.x = (num2 * quaternion1.x) - (num * quaternion2.x);
+                quaternion.y = (num2 * quaternion1.y) - (num * quaternion2.y);
+                quaternion.z = (num2 * quaternion1.z) - (num * quaternion2.z);
+                quaternion.w = (num2 * quaternion1.w) - (num * quaternion2.w);
+            }
+            float num4 = (((quaternion.x * quaternion.x) + (quaternion.y * quaternion.y)) + (quaternion.z * quaternion.z)) + (quaternion.w * quaternion.w);
+            float num3 = 1f / ((float) MathTools.Sqrt((double) num4));
+            quaternion.x *= num3;
+            quaternion.y *= num3;
+            quaternion.z *= num3;
+            quaternion.w *= num3;
+            return quaternion;
         }
     }
 }
