@@ -7,18 +7,25 @@ namespace Bigmonte.Essentials
 {
     public class BMAutoLoad : Node
     {
+        // Singleton pattern
         protected static BMAutoLoad _instance;
 
-        private readonly Dictionary<int, Node> _monoNodes = new Dictionary<int, Node>();
+        // List of our entities in the Tree
+        private readonly Dictionary<int, Node> _entitiesList = new Dictionary<int, Node>();
 
-        private readonly List<Node> _monoNodesToDelete = new List<Node>();
-        private readonly Dictionary<Node, UltraController> _ultras = new Dictionary<Node, UltraController>();
+        // List of nodes to remove next frame
+        private readonly List<Node> _toRemove = new List<Node>();
+        
+        // Dictionary containing Node and its associated EntityController
+        private readonly Dictionary<Node, EntityController> _entities = new Dictionary<Node, EntityController>();
 
-        public BMAutoLoad()
+        // Singleton pattern
+        protected BMAutoLoad()
         {
             _instance = this;
         }
 
+        // Singleton pattern
         public static BMAutoLoad Instance => _instance;
 
 
@@ -30,15 +37,19 @@ namespace Bigmonte.Essentials
             InitialScan();
         }
 
+        /// <summary>
+        ///    Mark the node for deletion in the next frame.
+        /// </summary>
+        
         public bool DeleteNode(Node node)
         {
-            if (_ultras.ContainsKey(node))
+            if (_entities.ContainsKey(node))
             {
                 MarkForDeletion(node);
 
-                if (!_monoNodesToDelete.Contains(node))
+                if (!_toRemove.Contains(node))
                 {
-                    _monoNodesToDelete.Add(node);
+                    _toRemove.Add(node);
                 }
 
                 return true;
@@ -47,25 +58,20 @@ namespace Bigmonte.Essentials
             return false;
         }
 
-        // Returns false if invalid
+        /// <summary>
+        ///    Check if the Node is active. 
+        ///    Return null if the node is invalid.
+        /// </summary>
         public bool CheckIfNodeIsActive(Node c)
         {
             var p = c.GetType().GetProperty("Visible");
-            if (p != null) return p.GetValue(c) is bool && (bool) p.GetValue(c);
-
-            return false;
+            return p.GetValue(c) is bool && (bool) p.GetValue(c);
         }
-
-
-        public void Quit()
-        {
-            var tree = GetTree();
-
-            tree?.Quit();
-        }
+        
 
         /// <summary>
-        ///    On _Process, we update every frame all of our nodes in the main thread
+        ///    On _Process, we update every frame all of our nodes in the main thread.
+        ///    In the end of the call we destroy nodes marked for deletion.
         /// </summary>
         public override void _Process(float delta)
         {
@@ -73,15 +79,15 @@ namespace Bigmonte.Essentials
             Time.deltaTime = delta;
 
 
-            for (var i = 0; i < _monoNodes.Count; i++)
+            for (var i = 0; i < _entitiesList.Count; i++)
             {
-                _ultras[_monoNodes[i]].Process();
-                _ultras[_monoNodes[i]].LateUpdate();
+                _entities[_entitiesList[i]].Process();
+                _entities[_entitiesList[i]].LateUpdate();
             }
 
-            if (_monoNodesToDelete.Count == 0) return;
+            if (_toRemove.Count == 0) return;
 
-            for (var i = 0; i < _monoNodesToDelete.Count; i++) RemoveNode(_monoNodesToDelete[i]);
+            for (var i = 0; i < _toRemove.Count; i++) DestroyEntity(_toRemove[i]);
         }
 
 
@@ -92,28 +98,37 @@ namespace Bigmonte.Essentials
         {
             Time.fixedDeltaTime = delta;
 
-            for (var i = 0; i < _monoNodes.Count; i++)
+            for (var i = 0; i < _entitiesList.Count; i++)
             {
-                var n = _monoNodes[i];
-                _ultras[n].FixedUpdate();
+                var n = _entitiesList[i];
+                _entities[n].FixedUpdate();
             }
         }
 
 
+        /// <summary>
+        ///    This method calls the recursive method CheckNode starting in the root node.
+        /// </summary>
+        
         private void InitialScan()
         {
             CheckNode(GetTree().Root);
         }
-
+        
+        /// <summary>
+        ///    Check if the node and its potential childs have a controller associated to them.
+        ///    If they don't have we associate one, and evoke the Awake method
+        /// </summary>
+    
         private void CheckNode(Node currentNode)
         {
-            var attr = currentNode.GetType().GetCustomAttribute<Extended>();
+            var attr = currentNode.GetType().GetCustomAttribute<Entity>();
 
-            if (attr != null && !_ultras.ContainsKey(currentNode))
+            if (attr != null && !_entities.ContainsKey(currentNode))
             {
-                _monoNodes[_monoNodes.Count] = currentNode;
-                _ultras[currentNode] = new UltraController(currentNode);
-                _ultras[currentNode].Awake();
+                _entitiesList[_entitiesList.Count] = currentNode;
+                _entities[currentNode] = new EntityController(currentNode);
+                _entities[currentNode].Awake();
             }
 
 
@@ -122,54 +137,79 @@ namespace Bigmonte.Essentials
                 CheckNode(n);
             }
         }
-
-        public bool InUltras(Node node)
-        {
-            return _ultras.ContainsKey(node);
-        }
-
-
+        
+        /// <summary>
+        ///    The method associated to the signal that is triggered when a node is added to the tree.
+        /// </summary>
         private void OnNodeAdded(Node node)
         {
             CheckNode(node);
         }
 
-
-        internal UltraController GetUltraController(Node node)
+        /// <summary>
+        ///    Get the Controller of a specific node.
+        /// </summary>
+        internal EntityController GetEntityController(Node node)
         {
-            return _ultras.ContainsKey(node) ? _ultras[node] : null;
+            return _entities.ContainsKey(node) ? _entities[node] : null;
         }
 
+        /// <summary>
+        ///    Set the Visibility for node and its children's.
+        /// </summary>
+        
         public void SetActiveVisibility(Node node, bool visible)
         {
-            if (!_ultras.ContainsKey(node))
+            if (!_entities.ContainsKey(node))
             {
                 RefreshVisibilityAttribute(visible, node);
                 UpdateChildrensVisibility(node, visible);
                 return;
             }
 
-            _ultras[node].ActivateNode(visible);
+            _entities[node].ActivateNode(visible);
             UpdateChildrensVisibility(node, visible);
         }
+        
+        /// <summary>
+        ///    Set the Visibility for a solo node.
+        /// </summary>
+        public void SetActiveSoloVisibility(Node node, bool visible)
+        {
+            if (!_entities.ContainsKey(node))
+            {
+                RefreshVisibilityAttribute(visible, node);
+                return;
+            }
 
+            _entities[node].ActivateNode(visible);
+        }
+
+        /// <summary>
+        ///    Recursive call that updates children's visibility and potential child's of the children's.
+        /// </summary>
         private void UpdateChildrensVisibility(Node node, bool visible)
         {
             var inspect = node;
 
             foreach (Node c in inspect.GetChildren())
             {
-                if (!_ultras.ContainsKey(c))
+                if (!_entities.ContainsKey(c))
                 {
                     RefreshVisibilityAttribute(visible, c);
                     continue;
                 }
 
-                _ultras[c].ActivateNode(visible);
+                _entities[c].ActivateNode(visible);
                 UpdateChildrensVisibility(c, visible);
             }
         }
-
+        
+        /// <summary>
+        ///    Set virtual or real visibility for the node.
+        ///    Note that only Control, Spatial and Canvas nodes have real visibilities.
+        /// </summary>
+  
         private static void RefreshVisibilityAttribute(bool visible, Node c)
         {
             var visibleProperty = c.GetType().GetProperty("Visible");
@@ -177,21 +217,28 @@ namespace Bigmonte.Essentials
             if (visibleProperty != null) visibleProperty.SetValue(c, visible);
         }
 
-        private void RemoveNode(Node node)
+        /// <summary>
+        ///    Destroy a potential Entity.
+        /// </summary>
+    
+        private void DestroyEntity(Node node)
         {
-            if (_monoNodes.ContainsValue(node))
+            if (_entitiesList.ContainsValue(node))
             {
-                var GetKey = _monoNodes.FirstOrDefault(x => x.Value == node).Key;
-                _monoNodes.Remove(GetKey);
+                var GetKey = _entitiesList.FirstOrDefault(x => x.Value == node).Key;
+                _entitiesList.Remove(GetKey);
             }
 
-            _ultras[node].ActivateNode(false);
-            _ultras.Remove(node);
-            _monoNodesToDelete.Remove(node);
+            _entities[node].ActivateNode(false);
+            _entities.Remove(node);
+            _toRemove.Remove(node);
             node.Free();
 
         }
 
+        /// <summary>
+        ///    Mark a Entity to be deleted in the end of the Process call. 
+        /// </summary>
         private void MarkForDeletion(Node node)
         {
             var inspect = node;
@@ -202,9 +249,9 @@ namespace Bigmonte.Essentials
             {
                 var c = cs[i] as Node;
                 
-                if (_ultras.ContainsKey(c))
+                if (_entities.ContainsKey(c))
                 {
-                    _monoNodesToDelete.Add(c);
+                    _toRemove.Add(c);
                 }
             }
         }

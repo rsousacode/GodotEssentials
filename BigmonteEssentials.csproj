@@ -54,7 +54,7 @@
     <Compile Include="Bigmonte\Essentials\Components\Attributes\UsedByNativeCodeAttribute.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Core\BMAutoLoad.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Core\Time.cs" />
-    <Compile Include="Bigmonte\Essentials\Components\Core\UltraController.cs" />
+    <Compile Include="Bigmonte\Essentials\Components\Core\EntityController.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Coroutines\Coroutine.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Coroutines\CustomYieldInstruction.cs" />
     <Compile Include="Bigmonte\Essentials\Components\Coroutines\WaitForSeconds.cs" />

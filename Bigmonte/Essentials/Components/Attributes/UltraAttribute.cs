@@ -1,6 +1,6 @@
 using System;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class Extended : Attribute
+public class Entity : Attribute
 {
 }

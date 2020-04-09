@@ -557,11 +557,8 @@ namespace Bigmonte.Essentials
 
         public static Transform SetTransformForward( Transform t, Vector3 newRotation)
         {
-            var lookDir = - newRotation - t.origin;
-            var rotationTransform =
-                t.LookingAt(t.origin + lookDir, new Vector3(0, 1, 0));
-            var thisRotation = new Quat(rotationTransform.basis);
-            return new Transform(thisRotation, t.origin);
+            t.SetLookAt(Vector3.Zero, - newRotation, Vector3.Up);
+            return  t;
         }
         public static Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t)
         {
@@ -620,6 +617,22 @@ namespace Bigmonte.Essentials
             var e = q.GetEuler();
             return e;
         }
+        
+        public static Vector3 MoveTowards(
+            Vector3 current,
+            Vector3 target,
+            float maxDistanceDelta)
+        {
+            float num1 = target.x - current.x;
+            float num2 = target.y - current.y;
+            float num3 = target.z - current.z;
+            float num4 = (float) ((double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3);
+            if ((double) num4 == 0.0 || (double) maxDistanceDelta >= 0.0 && (double) num4 <= (double) maxDistanceDelta * (double) maxDistanceDelta)
+                return target;
+            float num5 = (float) Math.Sqrt((double) num4);
+            return new Vector3(current.x + num1 / num5 * maxDistanceDelta, current.y + num2 / num5 * maxDistanceDelta, current.z + num3 / num5 * maxDistanceDelta);
+        }
+
 
         public static Vector3 QuatVector3Multiplication(Quat rotation, Vector3 point)
         {
@@ -644,5 +657,12 @@ namespace Bigmonte.Essentials
                                  (1.0 - (num4 + (double) num5)) * point.z);
             return vector3;
         }
+
+            public static Vector3 Vector3ClampMagnitude(Vector3 vector, float maxLength)
+            {
+                return (double) vector.LengthSquared() > (double) maxLength * (double) maxLength
+                    ? vector.Normalized() * maxLength
+                    : vector;
+            }
     }
 }

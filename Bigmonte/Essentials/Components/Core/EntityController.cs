@@ -6,7 +6,7 @@ using Godot;
 
 namespace Bigmonte.Essentials
 {
-    public class UltraController
+    public class EntityController
     {
         private const BindingFlags BindingFlags = System.Reflection.BindingFlags.Instance |
                                                   System.Reflection.BindingFlags.Public |
@@ -30,7 +30,7 @@ namespace Bigmonte.Essentials
         private VisibilityHandler _visibilityHandler;
 
 
-        public UltraController(Node node)
+        public EntityController(Node node)
         {
             _referencedNode = node;
         }
@@ -65,16 +65,23 @@ namespace Bigmonte.Essentials
             }
         }
 
-
+        /// <summary>
+        ///    On Awake we initialize our Entity.
+        /// </summary>
+        
         public void Awake()
         {
-            SetupUltraController();
+            SetupEntity();
         }
 
-
-        private void SetupUltraController()
+        /// <summary>
+        ///    Initial setup of the entity. Triggers Awake method if the node is visible
+        ///    and triggers an visibility change event. 
+        /// </summary>
+        
+        private void SetupEntity()
         {
-            InitUltraController();
+            InitializeEntityController();
             
 
             if (_awakeMethod != null) _awakeMethod.Invoke(_referencedNode, null);
@@ -97,8 +104,11 @@ namespace Bigmonte.Essentials
             
         }
 
-
-        private void InitUltraController()
+        /// <summary>
+        ///    Register visibility handler and Entity methods.
+        /// </summary>
+        
+        private void InitializeEntityController()
         {
             switch (_referencedNode)
             {
@@ -138,7 +148,7 @@ namespace Bigmonte.Essentials
 
 
         /// <summary>
-        ///    On Process, we update every frame 
+        ///    Called every frame
         /// </summary>
         public void Process()
         {
@@ -153,6 +163,10 @@ namespace Bigmonte.Essentials
 
             HandleCoroutines();
         }
+        
+        /// <summary>
+        ///    Handles virtual Coroutines
+        /// </summary>
 
         private void HandleCoroutines()
         {
@@ -166,6 +180,9 @@ namespace Bigmonte.Essentials
             }
         }
 
+        /// <summary>
+        ///    Virtual LateUpdate method
+        /// </summary>
         public void LateUpdate()
         {
             if (!_visibilityHandler.IsVisible) return;
@@ -173,6 +190,9 @@ namespace Bigmonte.Essentials
             if (_lateUpdateMethod != null) _lateUpdateMethod.Invoke(_referencedNode, null);
         }
 
+        /// <summary>
+        ///    Virtual FixedUpdate method
+        /// </summary>
         public void FixedUpdate()
         {
             if (!_visibilityHandler.IsVisible) return;
@@ -180,17 +200,28 @@ namespace Bigmonte.Essentials
             if (_fixedUpdateMethod != null) _fixedUpdateMethod.Invoke(_referencedNode, null);
         }
 
+        /// <summary>
+        ///    Virtual StartCoroutine method
+        /// </summary>
+        
         private Coroutine StartCoroutine(IEnumerator routine)
         {
             _coroutines.Add(routine);
             return new Coroutine(routine);
         }
-
+        
+        /// <summary>
+        ///    Virtual AddCoroutine method
+        /// </summary>
+        /// 
         public void AddCoroutine(IEnumerator routine)
         {
             _coroutines.Add(routine);
         }
-
+        
+        /// <summary>
+        ///    Used to Activate the node associated to this Entity Controller and triggers a Visibility Change event.
+        /// </summary>
         public void ActivateNode(bool status)
         {
             if (status == _visibilityHandler.IsVisible) return;
@@ -205,7 +236,9 @@ namespace Bigmonte.Essentials
 
         }
 
-
+        /// <summary>
+        ///    Trigger OnEnable and OnDisable methods regarding the current and previous visibility. 
+        /// </summary>
         private void OnVisibilityChange()
         {
             var curVisibility = _visibilityHandler.IsVisible;
