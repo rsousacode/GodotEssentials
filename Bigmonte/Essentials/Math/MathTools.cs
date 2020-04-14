@@ -430,12 +430,6 @@ namespace Bigmonte.Essentials
             return result;
         }
 
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern int NextPowerOfTwo(int value);
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public static extern float PerlinNoise(float x, float y);
-
         public static float PingPong(float t, float length)
         {
             t = Repeat(t, length * 2f);
@@ -602,38 +596,7 @@ namespace Bigmonte.Essentials
             var t = QuatVector3Multiplication(q, Vector3.Forward);
             return t;
         }
-
-        public static void SetTransformForward(Spatial v, Vector3 toSet)
-        {
-            var t = new Transform();
-            t.basis.z = toSet;
-            v.Transform = t;
-        }
-
-
-        public static Vector3 GetEulerAngles(Spatial v)
-        {
-            var q = new Quat(v.Transform.basis);
-            var e = q.GetEuler();
-            return e;
-        }
-        
-        public static Vector3 MoveTowards(
-            Vector3 current,
-            Vector3 target,
-            float maxDistanceDelta)
-        {
-            float num1 = target.x - current.x;
-            float num2 = target.y - current.y;
-            float num3 = target.z - current.z;
-            float num4 = (float) ((double) num1 * (double) num1 + (double) num2 * (double) num2 + (double) num3 * (double) num3);
-            if ((double) num4 == 0.0 || (double) maxDistanceDelta >= 0.0 && (double) num4 <= (double) maxDistanceDelta * (double) maxDistanceDelta)
-                return target;
-            float num5 = (float) Math.Sqrt((double) num4);
-            return new Vector3(current.x + num1 / num5 * maxDistanceDelta, current.y + num2 / num5 * maxDistanceDelta, current.z + num3 / num5 * maxDistanceDelta);
-        }
-
-
+ 
         public static Vector3 QuatVector3Multiplication(Quat rotation, Vector3 point)
         {
             var num1 = rotation.x * 2f;

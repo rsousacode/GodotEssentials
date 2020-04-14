@@ -64,6 +64,20 @@ namespace Bigmonte.Essentials
 
             return v as T;
         }
+        public static T Instantiate<T>(this Node node, Transform pos) where T : Node
+        {
+            var toInstantiate = new Node() as T;
+            node.AddChild(toInstantiate);
+            
+            if (node is Spatial spatial)
+            {
+                spatial.Transform = pos;
+            }
+
+            return toInstantiate;
+        }
+        
+        
         
         public static T Instantiate<T>(this Node node, string path, Transform2D pos) where T : Node
         {

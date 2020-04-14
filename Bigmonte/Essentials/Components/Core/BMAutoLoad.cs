@@ -7,19 +7,19 @@ namespace Bigmonte.Essentials
 {
     public class BMAutoLoad : Node
     {
-        // Singleton pattern
+        /// Singleton pattern
         protected static BMAutoLoad _instance;
 
-        // List of our entities in the Tree
+        /// List of our entities in the Tree
         private readonly Dictionary<int, Node> _entitiesList = new Dictionary<int, Node>();
 
-        // List of nodes to remove next frame
+        /// List of nodes to remove next frame
         private readonly List<Node> _toRemove = new List<Node>();
         
-        // Dictionary containing Node and its associated EntityController
+        /// Dictionary containing Nodes and its associated Entity Controllers.
         private readonly Dictionary<Node, EntityController> _entities = new Dictionary<Node, EntityController>();
 
-        // Singleton pattern
+        /// Singleton pattern
         protected BMAutoLoad()
         {
             _instance = this;
@@ -28,7 +28,9 @@ namespace Bigmonte.Essentials
         // Singleton pattern
         public static BMAutoLoad Instance => _instance;
 
-
+        /// <summary>
+        ///    On _Ready we connect the signal "node_added" and we do the Initial scan. 
+        /// </summary>
         public override void _Ready()
         {
             _instance = this;
@@ -116,7 +118,7 @@ namespace Bigmonte.Essentials
         }
         
         /// <summary>
-        ///    Check if the node and its potential childs have a controller associated to them.
+        ///    Check if the node and its potential child's have a controller associated to them.
         ///    If they don't have we associate one, and evoke the Awake method
         /// </summary>
     
