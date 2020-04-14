@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Godot;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     public static class ComponentExtensions
     {

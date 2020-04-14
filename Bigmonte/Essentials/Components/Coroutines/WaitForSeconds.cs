@@ -1,4 +1,4 @@
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     public class WaitForSeconds : CustomYieldInstruction
     {

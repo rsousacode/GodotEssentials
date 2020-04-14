@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     internal class ControlItemVisibilityHandler : VisibilityHandler
     {

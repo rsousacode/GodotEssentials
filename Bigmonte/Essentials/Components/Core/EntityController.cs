@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Godot;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     public class EntityController
     {

@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     [StructLayout(LayoutKind.Sequential, Size = 1)]
     public struct MathfInternal

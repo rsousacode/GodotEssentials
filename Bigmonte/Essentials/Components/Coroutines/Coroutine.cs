@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     [RequiredByNativeCode]
     [StructLayout(LayoutKind.Sequential)]

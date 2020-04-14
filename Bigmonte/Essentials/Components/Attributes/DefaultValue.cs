@@ -1,6 +1,6 @@
 using System;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     [AttributeUsage(AttributeTargets.GenericParameter | AttributeTargets.Parameter)]
     [Serializable]

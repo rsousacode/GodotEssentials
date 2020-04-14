@@ -1,7 +1,7 @@
 using System.Collections;
 using Godot;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     public abstract class CustomYieldInstruction : Object, IEnumerator
     {

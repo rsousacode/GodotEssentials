@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Godot;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     public class BMAutoLoad : Node
     {

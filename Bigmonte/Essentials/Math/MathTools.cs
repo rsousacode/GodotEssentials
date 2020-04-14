@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Godot;
 
-namespace Bigmonte.Essentials
+namespace Bigmonte.Entities
 {
     public struct MathTools
     {

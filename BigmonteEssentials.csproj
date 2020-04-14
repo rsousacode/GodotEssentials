@@ -38,11 +38,11 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GodotSharp, Version=1.0.7387.19309, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
+    <Reference Include="GodotSharp, Version=1.0.7374.16783, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\.mono\assemblies\Debug\GodotSharp.dll</HintPath>
     </Reference>
-    <Reference Include="GodotSharpEditor, Version=1.0.7387.19311, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
+    <Reference Include="GodotSharpEditor, Version=1.0.7374.16785, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\.mono\assemblies\Debug\GodotSharpEditor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
