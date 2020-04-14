@@ -5,10 +5,10 @@ using Godot;
 
 namespace Bigmonte.Entities
 {
-    public class BMAutoLoad : Node
+    public class BMEntitiesAutoLoad : Node
     {
         /// Singleton pattern
-        protected static BMAutoLoad _instance;
+        protected static BMEntitiesAutoLoad _instance;
 
         /// List of our entities in the Tree
         private readonly Dictionary<int, Node> _entitiesList = new Dictionary<int, Node>();
@@ -20,13 +20,13 @@ namespace Bigmonte.Entities
         private readonly Dictionary<Node, EntityController> _entities = new Dictionary<Node, EntityController>();
 
         /// Singleton pattern
-        protected BMAutoLoad()
+        protected BMEntitiesAutoLoad()
         {
             _instance = this;
         }
 
         // Singleton pattern
-        public static BMAutoLoad Instance => _instance;
+        public static BMEntitiesAutoLoad Instance => _instance;
 
         /// <summary>
         ///    On _Ready we connect the signal "node_added" and we do the Initial scan. 

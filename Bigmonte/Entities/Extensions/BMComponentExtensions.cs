@@ -119,7 +119,7 @@ namespace Bigmonte.Entities
         /// <param name="status"></param>
         public static void SetActive(this Node node, bool status)
         {
-            BMAutoLoad.Instance.SetActiveVisibility(node, status);
+            BMEntitiesAutoLoad.Instance.SetActiveVisibility(node, status);
         }
         
         /// <summary>
@@ -129,7 +129,7 @@ namespace Bigmonte.Entities
         /// <param name="status"></param>
         public static void SetActiveSolo(this Node node, bool status)
         {
-            BMAutoLoad.Instance.SetActiveSoloVisibility(node, status);
+            BMEntitiesAutoLoad.Instance.SetActiveSoloVisibility(node, status);
         }
 
         public static void SetModulateAlpha(this Control node, float alphaToSet)
@@ -143,7 +143,7 @@ namespace Bigmonte.Entities
 
         public static bool IsActive(this Node node)
         {
-            return  BMAutoLoad.Instance.CheckIfNodeIsActive(node);
+            return  BMEntitiesAutoLoad.Instance.CheckIfNodeIsActive(node);
         }
         
 
@@ -185,13 +185,13 @@ namespace Bigmonte.Entities
 
         public static bool Destroy(this Node node)
         {
-            return BMAutoLoad.Instance.DeleteNode(node);
+            return BMEntitiesAutoLoad.Instance.DeleteNode(node);
         }
 
 
         public static void StartCoroutine(this Node node, IEnumerator routine)
         {
-            BMAutoLoad.Instance.GetEntityController(node)?.AddCoroutine(routine);
+            BMEntitiesAutoLoad.Instance.GetEntityController(node)?.AddCoroutine(routine);
         }
     }
 }
