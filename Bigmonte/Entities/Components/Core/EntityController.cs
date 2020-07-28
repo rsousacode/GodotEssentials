@@ -6,6 +6,7 @@ using Godot;
 
 namespace Bigmonte.Entities
 {
+    [Tool]
     public class EntityController
     {
         private const BindingFlags BindingFlags = System.Reflection.BindingFlags.Instance |
@@ -83,6 +84,7 @@ namespace Bigmonte.Entities
         {
             InitializeEntityController();
             
+            if (!_visibilityHandler.IsVisible) return;
 
             if (_awakeMethod != null) _awakeMethod.Invoke(_referencedNode, null);
 
@@ -112,12 +114,7 @@ namespace Bigmonte.Entities
         {
             switch (_referencedNode)
             {
-                case Control node:
-                {
-                    var control = node;
-                    _visibilityHandler = new ControlItemVisibilityHandler(control);
-                    break;
-                }
+          
                 case Spatial node:
                 {
                     var spatial = node;
@@ -131,6 +128,7 @@ namespace Bigmonte.Entities
                     _visibilityHandler = new CanvasItemVisibilityHandler(canvasItem);
                     break;
                 }
+
                 default:
                     _visibilityHandler = new VisibilityHandler();
                     break;
@@ -163,7 +161,7 @@ namespace Bigmonte.Entities
 
             HandleCoroutines();
         }
-        
+
         /// <summary>
         ///    Handles virtual Coroutines
         /// </summary>
@@ -209,7 +207,7 @@ namespace Bigmonte.Entities
             _coroutines.Add(routine);
             return new Coroutine(routine);
         }
-        
+
         /// <summary>
         ///    Virtual AddCoroutine method
         /// </summary>
@@ -218,7 +216,7 @@ namespace Bigmonte.Entities
         {
             _coroutines.Add(routine);
         }
-        
+
         /// <summary>
         ///    Used to Activate the node associated to this Entity Controller and triggers a Visibility Change event.
         /// </summary>

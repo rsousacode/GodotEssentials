@@ -38,7 +38,7 @@ namespace Bigmonte.Entities
             return v;
         }
 
-        
+
         public static T Instantiate<T>(this Node node, string path, Vector3 pos) where T : Node
         {
             var v = PackedSceneInstance(path);
@@ -52,45 +52,36 @@ namespace Bigmonte.Entities
 
             return v as T;
         }
-        
+
         public static T Instantiate<T>(this Node node, string path, Transform pos) where T : Node
         {
             var v = PackedSceneInstance(path);
             node.AddChild(v);
-            if (node is Spatial spatial)
-            {
-                spatial.Transform = pos;
-            }
+            if (node is Spatial spatial) spatial.Transform = pos;
 
             return v as T;
         }
+
         public static T Instantiate<T>(this Node node, Transform pos) where T : Node
         {
             var toInstantiate = new Node() as T;
             node.AddChild(toInstantiate);
-            
-            if (node is Spatial spatial)
-            {
-                spatial.Transform = pos;
-            }
+
+            if (node is Spatial spatial) spatial.Transform = pos;
 
             return toInstantiate;
         }
-        
-        
-        
+
+
         public static T Instantiate<T>(this Node node, string path, Transform2D pos) where T : Node
         {
             var v = PackedSceneInstance(path);
             node.AddChild(v);
-            if (node is Node2D spatial)
-            {
-                spatial.Transform = pos;
-            }
+            if (node is Node2D spatial) spatial.Transform = pos;
 
             return v as T;
         }
-        
+
         public static T Instantiate<T>(this Node node, string path, Node parent) where T : Node
         {
             var v = PackedSceneInstance(path);

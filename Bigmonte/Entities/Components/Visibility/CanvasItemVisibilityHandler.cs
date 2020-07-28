@@ -16,9 +16,7 @@ namespace Bigmonte.Entities
         {
             get
             {
-                if (CanvasItem != null) return CanvasItem.Visible;
-
-                return false;
+                return CanvasItem.Visible;
             }
         }
     }

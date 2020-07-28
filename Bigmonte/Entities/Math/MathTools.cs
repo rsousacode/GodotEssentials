@@ -202,7 +202,7 @@ namespace Bigmonte.Entities
         {
             return a + (b - a) * Clamp01(t);
         }
-        
+
 
         public static float LerpAngle(float a, float b, float t)
         {
@@ -545,15 +545,16 @@ namespace Bigmonte.Entities
             var o1 = a.x + (b.x - a.x) * t;
             var o2 = a.y + (b.y - a.y) * t;
             var o3 = a.z + (b.z - a.z) * t;
-            return new Vector3(o1, o2 , o3);
+            return new Vector3(o1, o2, o3);
         }
-     
 
-        public static Transform SetTransformForward( Transform t, Vector3 newRotation)
+
+        public static Transform SetTransformForward(Transform t, Vector3 newRotation)
         {
-            t.SetLookAt(Vector3.Zero, - newRotation, Vector3.Up);
-            return  t;
+            t.SetLookAt(Vector3.Zero, -newRotation, Vector3.Up);
+            return t;
         }
+
         public static Vector2 Vector2Lerp(Vector2 a, Vector2 b, float t)
         {
             t = Clamp01(t);
@@ -571,7 +572,7 @@ namespace Bigmonte.Entities
         {
             return (float) Math.Sqrt(f);
         }
-        
+
         public static double Sqrt(double f)
         {
             return Math.Sqrt(f);
@@ -596,7 +597,7 @@ namespace Bigmonte.Entities
             var t = QuatVector3Multiplication(q, Vector3.Forward);
             return t;
         }
- 
+
         public static Vector3 QuatVector3Multiplication(Quat rotation, Vector3 point)
         {
             var num1 = rotation.x * 2f;
@@ -621,11 +622,22 @@ namespace Bigmonte.Entities
             return vector3;
         }
 
-            public static Vector3 Vector3ClampMagnitude(Vector3 vector, float maxLength)
-            {
-                return (double) vector.LengthSquared() > (double) maxLength * (double) maxLength
-                    ? vector.Normalized() * maxLength
-                    : vector;
-            }
+        public static Vector3 Vector3ClampMagnitude(Vector3 vector, float maxLength)
+        {
+            return (double) vector.LengthSquared() > (double) maxLength * (double) maxLength
+                ? vector.Normalized() * maxLength
+                : vector;
+        }
+
+        public static Vector2 Vector2ClampMagnitude(Vector2 vector, float maxLength)
+        {
+            var sqrMagnitude = vector.LengthSquared();
+            if (sqrMagnitude <= maxLength * (double) maxLength)
+                return vector;
+            var num1 = (float) Math.Sqrt(sqrMagnitude);
+            var num2 = vector.x / num1;
+            var num3 = vector.y / num1;
+            return new Vector2(num2 * maxLength, num3 * maxLength);
+        }
     }
 }

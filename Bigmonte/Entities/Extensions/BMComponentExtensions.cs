@@ -26,67 +26,44 @@ namespace Bigmonte.Entities
             do
             {
                 if (currentNode is T node1) return node1;
-        
+
                 var child = currentNode.GetComponentInChildren<T>();
                 if (child is T c) return c;
                 currentNode = currentNode.GetParent();
-        
             } while (currentNode != null);
-        
+
             return null;
         }
 
 
         private static T GetComponentInParentFromIndex<T>(this Node node, int i) where T : Node
         {
-            Node parent = node.GetParent();
-            
+            var parent = node.GetParent();
+
             while (i > 0)
             {
                 i--;
                 parent = parent.GetParent();
                 if (parent is T returnNode && i == 0) return returnNode;
-
             }
 
             if (parent is T returnParent) return returnParent;
             return null;
         }
-        
-        
+
+
         public static T[] GetComponentsInParent<T>(this Node node) where T : Node
         {
             var components = new List<T>();
 
-            foreach (var n in node.Owner.GetComponentsInChildren<T>())
-            {
-               components.Add(n);
-            }
+            foreach (var n in node.Owner.GetComponentsInChildren<T>()) components.Add(n);
 
             return components.ToArray();
         }
 
         public static T[] FindObjectsOfType<T>(this Node node) where T : Node
         {
-            var components = new List<T>();
-
-            var cs = node.GetComponentsInChildren<T>();
-
-            var ps = GetComponentsInParent<T>(node);
-
-            for (var i = 0; i < cs.Length; i++)
-            {
-                var c = cs[i];
-                components.Add(c);
-            }
-
-            for (var i = 0; i < ps.Length; i++)
-            {
-                var p = ps[i];
-                components.Add(p);
-            }
-
-            return components.ToArray();
+            return BMEntitiesAutoLoad.Instance.FindObjects<T>();
         }
 
         public static T GetComponentInChildren<T>(this Node node) where T : Node
@@ -121,7 +98,7 @@ namespace Bigmonte.Entities
         {
             BMEntitiesAutoLoad.Instance.SetActiveVisibility(node, status);
         }
-        
+
         /// <summary>
         ///     Set the visibility of the object
         /// </summary>
@@ -132,20 +109,19 @@ namespace Bigmonte.Entities
             BMEntitiesAutoLoad.Instance.SetActiveSoloVisibility(node, status);
         }
 
-        public static void SetModulateAlpha(this Control node, float alphaToSet)
+        public static void SetModulateAlpha(this CanvasItem node, float alphaToSet)
         {
-            Color m = node.Modulate;
+            var m = node.Modulate;
             m.a = alphaToSet;
             node.Modulate = m;
-
         }
 
 
         public static bool IsActive(this Node node)
         {
-            return  BMEntitiesAutoLoad.Instance.CheckIfNodeIsActive(node);
+            return BMEntitiesAutoLoad.Instance.CheckIfNodeIsActive(node);
         }
-        
+
 
         public static T[] GetComponentsInChildren<T>(this Node node) where T : Node
         {
@@ -160,7 +136,7 @@ namespace Bigmonte.Entities
             CollectChildComponents(viewport, components);
             return components.ToArray();
         }
-        
+
         private static void CollectChildComponents<T>(Node parent, List<T> components) where T : Node
         {
             var childCount = parent.GetChildCount();
@@ -171,7 +147,8 @@ namespace Bigmonte.Entities
                 for (var i = 0; i < childCount; i++)
                     CollectChildComponents(parent.GetChild(i), components);
         }
-         private static void CollectParentComponents<T>( Node n, List<T> components) where T : Node
+
+        private static void CollectParentComponents<T>(Node n, List<T> components) where T : Node
         {
             var childCount = n.GetTree().Root.GetChildCount();
 
@@ -179,13 +156,13 @@ namespace Bigmonte.Entities
 
             if (childCount > 0)
                 for (var i = 0; i < childCount; i++)
-                    CollectParentComponents(n.GetComponentInParentFromIndex<T>(i) , components);
+                    CollectParentComponents(n.GetComponentInParentFromIndex<T>(i), components);
         }
-        
 
-        public static bool Destroy(this Node node)
+
+        public static void Destroy(this Node node)
         {
-            return BMEntitiesAutoLoad.Instance.DeleteNode(node);
+            BMEntitiesAutoLoad.Instance.DeleteNode(node);
         }
 
 

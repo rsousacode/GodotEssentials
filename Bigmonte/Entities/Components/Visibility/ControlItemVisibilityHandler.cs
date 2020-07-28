@@ -21,7 +21,7 @@ namespace Bigmonte.Entities
                 return false;
             }
         }
-        
+
         public override void SetVisibility(bool status)
         {
             _visibility = status;
@@ -29,4 +29,3 @@ namespace Bigmonte.Entities
         }
     }
 }
-
