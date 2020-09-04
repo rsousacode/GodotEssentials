@@ -1,4 +1,4 @@
-# C# Essentials for Godot
+# Godot Unity Compatibility 
 
 This project allows  enabling and disabling nodes virtually. This means methods such as `Process`, `LateUpdate` and `FixedUpdate`, will not run when the object is not visible, and therefore inactive.
 It is mainly a fork of: [unity-godot-compat](https://github.com/NathanWarden/unity-godot-compat) with many deletions and modifications.
